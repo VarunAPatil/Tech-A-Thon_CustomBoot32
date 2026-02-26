@@ -1,0 +1,170 @@
+Command: /home/varun/.espressif/python_env/idf5.5_py3.10_env/bin/python /home/varun/esp/esp-idf/tools/idf_monitor.py -p /dev/ttyACM0 -b 115200 --toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 --revision 0 /home/varun/Thadomal_hackathon/GPS_Sensor/build/GPS_Sensor.elf /home/varun/Thadomal_hackathon/GPS_Sensor/build/bootloader/bootloader.elf -m '/home/varun/.espressif/python_env/idf5.5_py3.10_env/bin/python' '/home/varun/esp/esp-idf/tools/idf.py'
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x2a (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x159c
+load:0x403c8700,len:0xd24
+load:0x403cb700,len:0x2f48
+entry 0x403c8924
+[0;32mI (24) boot: ESP-IDF v5.5 2nd stage bootloader[0m
+[0;32mI (25) boot: compile time Feb 24 2026 16:50:36[0m
+[0;32mI (25) boot: Multicore bootloader[0m
+[0;32mI (25) boot: chip revision: v0.2[0m
+[0;32mI (28) boot: efuse block revision: v1.3[0m
+[0;32mI (31) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (35) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (39) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (43) boot: Enabling RNG early entropy source...[0m
+[0;32mI (47) boot: Partition Table:[0m
+[0;32mI (50) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (69) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (76) boot: End of partition table[0m
+[0;32mI (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a5a0h ( 42400) map[0m
+[0;32mI (94) esp_image: segment 1: paddr=0001a5c8 vaddr=3fc92700 size=02ad8h ( 10968) load[0m
+[0;32mI (96) esp_image: segment 2: paddr=0001d0a8 vaddr=40374000 size=02f70h ( 12144) load[0m
+[0;32mI (104) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=185d4h ( 99796) map[0m
+[0;32mI (126) esp_image: segment 4: paddr=000385fc vaddr=40376f70 size=0b688h ( 46728) load[0m
+[0;32mI (137) esp_image: segment 5: paddr=00043c8c vaddr=600fe000 size=00020h (    32) load[0m
+[0;32mI (143) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (143) boot: Disabling RNG early entropy source...[0m
+[0;32mI (154) cpu_start: Multicore app[0m
+[0;32mI (163) cpu_start: Pro cpu start user code[0m
+[0;32mI (163) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (164) app_init: Application information:[0m
+[0;32mI (164) app_init: Project name:     GPS_Sensor[0m
+[0;32mI (168) app_init: App version:      1[0m
+[0;32mI (171) app_init: Compile time:     Feb 24 2026 16:50:32[0m
+[0;32mI (176) app_init: ELF file SHA256:  fa46c3fad...[0m
+[0;32mI (180) app_init: ESP-IDF:          v5.5[0m
+[0;32mI (184) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (188) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (192) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (196) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (202) heap_init: At 3FC95AC8 len 00053C48 (335 KiB): RAM[0m
+[0;32mI (207) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (212) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (218) heap_init: At 600FE020 len 00001FC8 (7 KiB): RTCRAM[0m
+[0;32mI (224) spi_flash: detected chip: boya[0m
+[0;32mI (226) spi_flash: flash io: dio[0m
+[0;33mW (229) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (242) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (248) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (255) main_task: Started on CPU0[0m
+[0;32mI (275) main_task: Calling app_main()[0m
+[0;32mI (275) HX711: HX711 calibrated scale started[0m
+[0;32mI (3575) WEIGHT: 44.72 grams[0m
+[0;32mI (6545) WEIGHT: 44.74 grams[0m
+[0;32mI (9505) WEIGHT: 44.69 grams[0m
+[0;32mI (12475) WEIGHT: 44.78 grams[0m
+[0;32mI (15445) WEIGHT: 45.42 grams[0m
+[0;32mI (18405) WEIGHT: 45.13 grams[0m
+[0;32mI (21375) WEIGHT: 44.64 grams[0m
+[0;32mI (24335) WEIGHT: 44.61 grams[0m
+[0;32mI (27305) WEIGHT: 14.79 grams[0m
+[0;32mI (30275) WEIGHT: -250.02 grams[0m
+[0;32mI (33235) WEIGHT: 73.94 grams[0m
+[0;32mI (36205) WEIGHT: 36.91 grams[0m
+[0;32mI (39165) WEIGHT: 44.77 grams[0m
+[0;32mI (42135) WEIGHT: 44.69 grams[0m
+[0;32mI (45105) WEIGHT: 44.65 grams[0m
+[0;32mI (48065) WEIGHT: 44.60 grams[0m
+[0;32mI (51035) WEIGHT: 315.12 grams[0m
+[0;32mI (54005) WEIGHT: 749.41 grams[0m
+[0;32mI (56965) WEIGHT: 246.47 grams[0m
+[0;32mI (59935) WEIGHT: 44.53 grams[0m
+[0;32mI (62895) WEIGHT: 44.55 grams[0m
+[0;32mI (65865) WEIGHT: 44.63 grams[0m
+[0;32mI (68835) WEIGHT: 44.16 grams[0m
+[0;32mI (71795) WEIGHT: 44.46 grams[0m
+[0;32mI (74765) WEIGHT: 19.42 grams[0m
+[0;32mI (77725) WEIGHT: -223.21 grams[0m
+[0;32mI (80695) WEIGHT: -109.95 grams[0m
+[0;32mI (83655) WEIGHT: 74.57 grams[0m
+[0;32mI (86625) WEIGHT: 96.06 grams[0m
+[0;32mI (89595) WEIGHT: 96.00 grams[0m
+[0;32mI (92555) WEIGHT: 96.03 grams[0m
+[0;32mI (95525) WEIGHT: 96.07 grams[0m
+[0;32mI (98485) WEIGHT: 96.06 grams[0m
+[0;32mI (101455) WEIGHT: 96.06 grams[0m
+[0;32mI (104425) WEIGHT: 96.00 grams[0m
+[0;32mI (107385) WEIGHT: 87.63 grams[0m
+[0;32mI (110355) WEIGHT: 95.93 grams[0m
+[0;32mI (113315) WEIGHT: 96.01 grams[0m
+[0;32mI (116285) WEIGHT: 96.09 grams[0m
+[0;32mI (119245) WEIGHT: 88.22 grams[0m
+[0;32mI (122215) WEIGHT: 96.09 grams[0m
+[0;32mI (125185) WEIGHT: 96.05 grams[0m
+[0;32mI (128145) WEIGHT: 96.05 grams[0m
+[0;32mI (131115) WEIGHT: 57.05 grams[0m
+[0;32mI (134075) WEIGHT: 44.28 grams[0m
+[0;32mI (137045) WEIGHT: 44.23 grams[0m
+[0;32mI (140015) WEIGHT: 44.19 grams[0m
+[0;32mI (142975) WEIGHT: 44.09 grams[0m
+[0;32mI (145945) WEIGHT: 44.22 grams[0m
+[0;32mI (148905) WEIGHT: 44.22 grams[0m
+[0;32mI (151875) WEIGHT: 44.22 grams[0m
+[0;32mI (154835) WEIGHT: 44.29 grams[0m
+[0;32mI (157805) WEIGHT: 44.29 grams[0m
+[0;32mI (160775) WEIGHT: 44.28 grams[0m
+[0;32mI (163735) WEIGHT: 44.30 grams[0m
+[0;32mI (166705) WEIGHT: 44.27 grams[0m
+[0;32mI (169665) WEIGHT: 44.26 grams[0m
+[0;32mI (172635) WEIGHT: 44.19 grams[0m
+[0;32mI (175595) WEIGHT: 44.22 grams[0m
+[0;32mI (178565) WEIGHT: 44.22 grams[0m
+[0;32mI (181535) WEIGHT: 44.18 grams[0m
+[0;32mI (184495) WEIGHT: 44.35 grams[0m
+[0;32mI (187465) WEIGHT: 44.39 grams[0m
+[0;32mI (190425) WEIGHT: 44.44 grams[0m
+[0;32mI (193395) WEIGHT: 44.48 grams[0m
+[0;32mI (196365) WEIGHT: 44.53 grams[0m
+[0;32mI (199325) WEIGHT: 44.57 grams[0m
+[0;32mI (202295) WEIGHT: 44.58 grams[0m
+[0;32mI (205255) WEIGHT: 44.63 grams[0m
+[0;32mI (208225) WEIGHT: 44.63 grams[0m
+[0;32mI (211195) WEIGHT: 44.73 grams[0m
+[0;32mI (214155) WEIGHT: 44.77 grams[0m
+[0;32mI (217125) WEIGHT: 44.69 grams[0m
+[0;32mI (220085) WEIGHT: 44.70 grams[0m
+[0;32mI (223055) WEIGHT: 44.65 grams[0m
+[0;32mI (226015) WEIGHT: 44.68 grams[0m
+[0;32mI (228985) WEIGHT: 44.70 grams[0m
+[0;32mI (231945) WEIGHT: 44.72 grams[0m
+[0;32mI (234915) WEIGHT: 44.70 grams[0m
+[0;32mI (237875) WEIGHT: 44.67 grams[0m
+[0;32mI (240845) WEIGHT: 44.61 grams[0m
+[0;32mI (243805) WEIGHT: 44.50 grams[0m
+[0;32mI (246775) WEIGHT: 44.48 grams[0m
+[0;32mI (249735) WEIGHT: 44.50 grams[0m
+[0;32mI (252705) WEIGHT: 44.45 grams[0m
+[0;32mI (255665) WEIGHT: 44.48 grams[0m
+[0;32mI (258635) WEIGHT: 76.91 grams[0m
+[0;32mI (261595) WEIGHT: 153.79 grams[0m
+[0;32mI (264565) WEIGHT: 156.38 grams[0m
+[0;32mI (267525) WEIGHT: 197.83 grams[0m
+[0;32mI (270495) WEIGHT: 211.03 grams[0m
+[0;32mI (273455) WEIGHT: 200.43 grams[0m
+[0;32mI (276425) WEIGHT: 194.19 grams[0m
+[0;32mI (279385) WEIGHT: 92.66 grams[0m
+[0;32mI (282355) WEIGHT: 122.78 grams[0m
+[0;32mI (285325) WEIGHT: 123.81 grams[0m
+[0;32mI (288285) WEIGHT: 44.88 grams[0m
+[0;32mI (291255) WEIGHT: 44.80 grams[0m
+[0;32mI (294215) WEIGHT: 44.72 grams[0m
+[0;32mI (297185) WEIGHT: 44.65 grams[0m
+[0;32mI (300145) WEIGHT: 44.56 grams[0m
+[0;32mI (303115) WEIGHT: 53.92 grams[0m
+[0;32mI (306075) WEIGHT: 44.66 grams[0m
+[0;32mI (309045) WEIGHT: 44.55 grams[0m
+[0;32mI (312005) WEIGHT: 44.37 grams[0m
+[0;32mI (314975) WEIGHT: 62.09 grams[0m
+[0;32mI (317935) WEIGHT: 45.05 grams[0m
+[0;32mI (320905) WEIGHT: 44.15 grams[0m
+[0;32mI (323865) WEIGHT: 44.08 grams[0m
+[0;32mI (326835) WEIGHT: 44.09 grams[0m
+[0;32mI (329795) WEIGHT: 44.08 grams[0m
+[0;32mI (332765) WEIGHT: 44.11 grams[0m

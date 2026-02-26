@@ -1,0 +1,323 @@
+Command: /home/varun/.espressif/python_env/idf5.5_py3.10_env/bin/python /home/varun/esp/esp-idf/tools/idf_monitor.py -p /dev/ttyACM0 -b 115200 --toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 --revision 0 /home/varun/Thadomal_hackathon/GPS_Sensor/build/GPS_Sensor.elf /home/varun/Thadomal_hackathon/GPS_Sensor/build/bootloader/bootloader.elf -m '/home/varun/.espressif/python_env/idf5.5_py3.10_env/bin/python' '/home/varun/esp/esp-idf/tools/idf.py'
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x159c
+load:0x403c8700,len:0xd24
+load:0x403cb700,len:0x2f48
+entry 0x403c8924
+[0;32mI (24) boot: ESP-IDF v5.5 2nd stage bootloader[0m
+[0;32mI (25) boot: compile time Feb 24 2026 16:50:36[0m
+[0;32mI (25) boot: Multicore bootloader[0m
+[0;32mI (25) boot: chip revision: v0.2[0m
+[0;32mI (27) boot: efuse block revision: v1.3[0m
+[0;32mI (31) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (35) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (39) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (42) boot: Enabling RNG early entropy source...[0m
+[0;32mI (47) boot: Partition Table:[0m
+[0;32mI (50) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (69) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (75) boot: End of partition table[0m
+[0;32mI (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0b42ch ( 46124) map[0m
+[0;32mI (94) esp_image: segment 1: paddr=0001b454 vaddr=3fc93600 size=02ad8h ( 10968) load[0m
+[0;32mI (97) esp_image: segment 2: paddr=0001df34 vaddr=40374000 size=020e4h (  8420) load[0m
+[0;32mI (103) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=1bbd0h (113616) map[0m
+[0;32mI (129) esp_image: segment 4: paddr=0003bbf8 vaddr=403760e4 size=0d4f8h ( 54520) load[0m
+[0;32mI (141) esp_image: segment 5: paddr=000490f8 vaddr=600fe000 size=00020h (    32) load[0m
+[0;32mI (147) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (147) boot: Disabling RNG early entropy source...[0m
+[0;32mI (158) cpu_start: Multicore app[0m
+[0;32mI (168) cpu_start: Pro cpu start user code[0m
+[0;32mI (168) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (168) app_init: Application information:[0m
+[0;32mI (168) app_init: Project name:     GPS_Sensor[0m
+[0;32mI (172) app_init: App version:      1[0m
+[0;32mI (175) app_init: Compile time:     Feb 24 2026 16:50:32[0m
+[0;32mI (180) app_init: ELF file SHA256:  75c368377...[0m
+[0;32mI (185) app_init: ESP-IDF:          v5.5[0m
+[0;32mI (188) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (192) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (196) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (200) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (206) heap_init: At 3FC969B8 len 00052D58 (331 KiB): RAM[0m
+[0;32mI (211) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (217) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (222) heap_init: At 600FE020 len 00001FC8 (7 KiB): RTCRAM[0m
+[0;32mI (228) spi_flash: detected chip: boya[0m
+[0;32mI (231) spi_flash: flash io: dio[0m
+[0;33mW (234) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (246) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (252) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (259) main_task: Started on CPU0[0m
+[0;32mI (279) main_task: Calling app_main()[0m
+[0;32mI (279) GPS: GPS UART started...[0m
+[0;32mI (279) main_task: Returned from app_main()[0m
+[0;32mI (649) GPS: Waiting for GPS fix...[0m
+[0;32mI (1649) GPS: Waiting for GPS fix...[0m
+[0;32mI (2649) GPS: Waiting for GPS fix...[0m
+[0;32mI (3649) GPS: Waiting for GPS fix...[0m
+[0;32mI (4649) GPS: Waiting for GPS fix...[0m
+[0;32mI (5649) GPS: Waiting for GPS fix...[0m
+[0;32mI (6649) GPS: Waiting for GPS fix...[0m
+[0;32mI (7649) GPS: Waiting for GPS fix...[0m
+[0;32mI (8649) GPS: Waiting for GPS fix...[0m
+[0;32mI (9649) GPS: Waiting for GPS fix...[0m
+[0;32mI (10649) GPS: Waiting for GPS fix...[0m
+[0;32mI (11649) GPS: Waiting for GPS fix...[0m
+[0;32mI (12649) GPS: Waiting for GPS fix...[0m
+[0;32mI (13649) GPS: Waiting for GPS fix...[0m
+[0;32mI (14649) GPS: Waiting for GPS fix...[0m
+[0;32mI (15649) GPS: Waiting for GPS fix...[0m
+[0;32mI (16649) GPS: Waiting for GPS fix...[0m
+[0;32mI (17649) GPS: Waiting for GPS fix...[0m
+[0;32mI (18649) GPS: Waiting for GPS fix...[0m
+[0;32mI (19649) GPS: Waiting for GPS fix...[0m
+[0;32mI (20649) GPS: Waiting for GPS fix...[0m
+[0;32mI (21649) GPS: Waiting for GPS fix...[0m
+[0;32mI (22649) GPS: Waiting for GPS fix...[0m
+[0;32mI (23649) GPS: Waiting for GPS fix...[0m
+[0;32mI (24649) GPS: Waiting for GPS fix...[0m
+[0;32mI (25649) GPS: Waiting for GPS fix...[0m
+[0;32mI (26649) GPS: Waiting for GPS fix...[0m
+[0;32mI (27649) GPS: Waiting for GPS fix...[0m
+[0;32mI (28649) GPS: Waiting for GPS fix...[0m
+[0;32mI (29649) GPS: Waiting for GPS fix...[0m
+[0;32mI (30649) GPS: Waiting for GPS fix...[0m
+[0;32mI (31649) GPS: Waiting for GPS fix...[0m
+[0;32mI (32649) GPS: Waiting for GPS fix...[0m
+[0;32mI (33649) GPS: Waiting for GPS fix...[0m
+[0;32mI (34649) GPS: Waiting for GPS fix...[0m
+[0;32mI (35649) GPS: Waiting for GPS fix...[0m
+[0;32mI (36649) GPS: Waiting for GPS fix...[0m
+[0;32mI (37649) GPS: Waiting for GPS fix...[0m
+[0;32mI (38649) GPS: Waiting for GPS fix...[0m
+[0;32mI (39649) GPS: Waiting for GPS fix...[0m
+[0;32mI (40649) GPS: Waiting for GPS fix...[0m
+[0;32mI (41649) GPS: Waiting for GPS fix...[0m
+[0;32mI (42649) GPS: Waiting for GPS fix...[0m
+[0;32mI (43649) GPS: Waiting for GPS fix...[0m
+[0;32mI (44649) GPS: Waiting for GPS fix...[0m
+[0;32mI (45649) GPS: Waiting for GPS fix...[0m
+[0;32mI (46649) GPS: Waiting for GPS fix...[0m
+[0;32mI (47649) GPS: Waiting for GPS fix...[0m
+[0;32mI (48649) GPS: Waiting for GPS fix...[0m
+[0;32mI (49649) GPS: Waiting for GPS fix...[0m
+[0;32mI (50649) GPS: Waiting for GPS fix...[0m
+[0;32mI (51649) GPS: Waiting for GPS fix...[0m
+[0;32mI (52649) GPS: Waiting for GPS fix...[0m
+[0;32mI (53649) GPS: Waiting for GPS fix...[0m
+[0;32mI (54649) GPS: Waiting for GPS fix...[0m
+[0;32mI (55649) GPS: Waiting for GPS fix...[0m
+[0;32mI (56649) GPS: Waiting for GPS fix...[0m
+[0;32mI (57649) GPS: Waiting for GPS fix...[0m
+[0;32mI (58649) GPS: Waiting for GPS fix...[0m
+[0;32mI (59649) GPS: Waiting for GPS fix...[0m
+[0;32mI (60649) GPS: Waiting for GPS fix...[0m
+[0;32mI (61649) GPS: Waiting for GPS fix...[0m
+[0;32mI (62649) GPS: Waiting for GPS fix...[0m
+[0;32mI (63649) GPS: Waiting for GPS fix...[0m
+[0;32mI (64649) GPS: Waiting for GPS fix...[0m
+[0;32mI (65649) GPS: Waiting for GPS fix...[0m
+[0;32mI (66649) GPS: Waiting for GPS fix...[0m
+[0;32mI (67649) GPS: Waiting for GPS fix...[0m
+[0;32mI (68649) GPS: Waiting for GPS fix...[0m
+[0;32mI (69649) GPS: Waiting for GPS fix...[0m
+[0;32mI (70649) GPS: Waiting for GPS fix...[0m
+[0;32mI (71649) GPS: Waiting for GPS fix...[0m
+[0;32mI (72649) GPS: Waiting for GPS fix...[0m
+[0;32mI (73649) GPS: Waiting for GPS fix...[0m
+[0;32mI (74649) GPS: Waiting for GPS fix...[0m
+[0;32mI (75649) GPS: Waiting for GPS fix...[0m
+[0;32mI (76649) GPS: Waiting for GPS fix...[0m
+[0;32mI (77649) GPS: Waiting for GPS fix...[0m
+[0;32mI (78649) GPS: Waiting for GPS fix...[0m
+[0;32mI (79649) GPS: Waiting for GPS fix...[0m
+[0;32mI (80649) GPS: Waiting for GPS fix...[0m
+[0;32mI (81649) GPS: Waiting for GPS fix...[0m
+[0;32mI (82659) GPS: Waiting for GPS fix...[0m
+[0;32mI (83659) GPS: Waiting for GPS fix...[0m
+[0;32mI (84649) GPS: Waiting for GPS fix...[0m
+[0;32mI (85649) GPS: Waiting for GPS fix...[0m
+[0;32mI (86649) GPS: Waiting for GPS fix...[0m
+[0;32mI (87649) GPS: Waiting for GPS fix...[0m
+[0;32mI (88649) GPS: Waiting for GPS fix...[0m
+[0;32mI (89649) GPS: Waiting for GPS fix...[0m
+[0;32mI (90649) GPS: Waiting for GPS fix...[0m
+[0;32mI (91649) GPS: Waiting for GPS fix...[0m
+[0;32mI (92649) GPS: Waiting for GPS fix...[0m
+[0;32mI (93649) GPS: Waiting for GPS fix...[0m
+[0;32mI (94659) GPS: Waiting for GPS fix...[0m
+[0;32mI (95649) GPS: Waiting for GPS fix...[0m
+[0;32mI (96649) GPS: Waiting for GPS fix...[0m
+[0;32mI (97649) GPS: Waiting for GPS fix...[0m
+[0;32mI (98649) GPS: Waiting for GPS fix...[0m
+[0;32mI (99649) GPS: Waiting for GPS fix...[0m
+[0;32mI (100649) GPS: Waiting for GPS fix...[0m
+[0;32mI (101649) GPS: Waiting for GPS fix...[0m
+[0;32mI (102649) GPS: Waiting for GPS fix...[0m
+[0;32mI (103649) GPS: Waiting for GPS fix...[0m
+[0;32mI (104649) GPS: Waiting for GPS fix...[0m
+[0;32mI (105649) GPS: Waiting for GPS fix...[0m
+[0;32mI (106649) GPS: Waiting for GPS fix...[0m
+[0;32mI (107649) GPS: Waiting for GPS fix...[0m
+[0;32mI (108649) GPS: Waiting for GPS fix...[0m
+[0;32mI (109649) GPS: Waiting for GPS fix...[0m
+[0;32mI (110649) GPS: Waiting for GPS fix...[0m
+[0;32mI (111649) GPS: Waiting for GPS fix...[0m
+[0;32mI (112649) GPS: Waiting for GPS fix...[0m
+[0;32mI (113649) GPS: Waiting for GPS fix...[0m
+[0;32mI (114649) GPS: Waiting for GPS fix...[0m
+[0;32mI (115649) GPS: Waiting for GPS fix...[0m
+[0;32mI (116649) GPS: Waiting for GPS fix...[0m
+[0;32mI (117649) GPS: Waiting for GPS fix...[0m
+[0;32mI (118649) GPS: Waiting for GPS fix...[0m
+[0;32mI (119649) GPS: Waiting for GPS fix...[0m
+[0;32mI (120649) GPS: Waiting for GPS fix...[0m
+[0;32mI (121649) GPS: Waiting for GPS fix...[0m
+[0;32mI (122649) GPS: Waiting for GPS fix...[0m
+[0;32mI (123649) GPS: Waiting for GPS fix...[0m
+[0;32mI (124649) GPS: Waiting for GPS fix...[0m
+[0;32mI (125649) GPS: Waiting for GPS fix...[0m
+[0;32mI (126649) GPS: Waiting for GPS fix...[0m
+[0;32mI (127649) GPS: Waiting for GPS fix...[0m
+[0;32mI (128649) GPS: Waiting for GPS fix...[0m
+[0;32mI (129649) GPS: Waiting for GPS fix...[0m
+[0;32mI (130649) GPS: Waiting for GPS fix...[0m
+[0;32mI (131649) GPS: Waiting for GPS fix...[0m
+[0;32mI (132649) GPS: Waiting for GPS fix...[0m
+[0;32mI (133649) GPS: Waiting for GPS fix...[0m
+[0;32mI (134649) GPS: Waiting for GPS fix...[0m
+[0;32mI (135649) GPS: Waiting for GPS fix...[0m
+[0;32mI (136649) GPS: Waiting for GPS fix...[0m
+[0;32mI (137649) GPS: Waiting for GPS fix...[0m
+[0;32mI (138649) GPS: Waiting for GPS fix...[0m
+[0;32mI (139649) GPS: Waiting for GPS fix...[0m
+[0;32mI (140649) GPS: Waiting for GPS fix...[0m
+[0;32mI (141649) GPS: Waiting for GPS fix...[0m
+[0;32mI (142649) GPS: Waiting for GPS fix...[0m
+[0;32mI (143649) GPS: Waiting for GPS fix...[0m
+[0;32mI (144649) GPS: Waiting for GPS fix...[0m
+[0;32mI (145649) GPS: Waiting for GPS fix...[0m
+[0;32mI (146649) GPS: Waiting for GPS fix...[0m
+[0;32mI (147649) GPS: Waiting for GPS fix...[0m
+[0;32mI (148649) GPS: Waiting for GPS fix...[0m
+[0;32mI (149649) GPS: Waiting for GPS fix...[0m
+[0;32mI (150649) GPS: Waiting for GPS fix...[0m
+[0;32mI (151649) GPS: Waiting for GPS fix...[0m
+[0;32mI (152649) GPS: Waiting for GPS fix...[0m
+[0;32mI (153649) GPS: Waiting for GPS fix...[0m
+[0;32mI (154649) GPS: Waiting for GPS fix...[0m
+[0;32mI (155649) GPS: Waiting for GPS fix...[0m
+[0;32mI (156649) GPS: Waiting for GPS fix...[0m
+[0;32mI (157649) GPS: Waiting for GPS fix...[0m
+[0;32mI (158649) GPS: Waiting for GPS fix...[0m
+[0;32mI (159649) GPS: Waiting for GPS fix...[0m
+[0;32mI (160649) GPS: Waiting for GPS fix...[0m
+[0;32mI (161649) GPS: Waiting for GPS fix...[0m
+[0;32mI (162649) GPS: Waiting for GPS fix...[0m
+[0;32mI (163649) GPS: Waiting for GPS fix...[0m
+[0;32mI (164649) GPS: Waiting for GPS fix...[0m
+[0;32mI (165649) GPS: Waiting for GPS fix...[0m
+[0;32mI (166649) GPS: Waiting for GPS fix...[0m
+[0;32mI (167649) GPS: Waiting for GPS fix...[0m
+[0;32mI (168649) GPS: Waiting for GPS fix...[0m
+[0;32mI (169649) GPS: Waiting for GPS fix...[0m
+[0;32mI (170649) GPS: Waiting for GPS fix...[0m
+[0;32mI (171649) GPS: Waiting for GPS fix...[0m
+[0;32mI (172649) GPS: Waiting for GPS fix...[0m
+[0;32mI (173649) GPS: Waiting for GPS fix...[0m
+[0;32mI (174649) GPS: Waiting for GPS fix...[0m
+[0;32mI (175649) GPS: Waiting for GPS fix...[0m
+[0;32mI (176649) GPS: Waiting for GPS fix...[0m
+[0;32mI (177649) GPS: Waiting for GPS fix...[0m
+[0;32mI (178649) GPS: Waiting for GPS fix...[0m
+[0;32mI (179649) GPS: Waiting for GPS fix...[0m
+[0;32mI (180649) GPS: Waiting for GPS fix...[0m
+[0;32mI (181649) GPS: Waiting for GPS fix...[0m
+[0;32mI (182649) GPS: Waiting for GPS fix...[0m
+[0;32mI (183649) GPS: Waiting for GPS fix...[0m
+[0;32mI (184649) GPS: Waiting for GPS fix...[0m
+[0;32mI (185649) GPS: Waiting for GPS fix...[0m
+[0;32mI (186649) GPS: Waiting for GPS fix...[0m
+[0;32mI (187649) GPS: Waiting for GPS fix...[0m
+[0;32mI (188659) GPS: Waiting for GPS fix...[0m
+[0;32mI (189649) GPS: Waiting for GPS fix...[0m
+[0;32mI (190649) GPS: Waiting for GPS fix...[0m
+[0;32mI (191649) GPS: Waiting for GPS fix...[0m
+[0;32mI (192649) GPS: Waiting for GPS fix...[0m
+[0;32mI (193649) GPS: Waiting for GPS fix...[0m
+[0;32mI (194649) GPS: Waiting for GPS fix...[0m
+[0;32mI (195649) GPS: Waiting for GPS fix...[0m
+[0;32mI (196659) GPS: Waiting for GPS fix...[0m
+[0;32mI (197649) GPS: Waiting for GPS fix...[0m
+[0;32mI (198649) GPS: Waiting for GPS fix...[0m
+[0;32mI (199649) GPS: Waiting for GPS fix...[0m
+[0;32mI (200649) GPS: Waiting for GPS fix...[0m
+[0;32mI (201649) GPS: Waiting for GPS fix...[0m
+[0;32mI (202649) GPS: Waiting for GPS fix...[0m
+[0;32mI (203649) GPS: Waiting for GPS fix...[0m
+[0;32mI (204649) GPS: Waiting for GPS fix...[0m
+[0;32mI (205649) GPS: Waiting for GPS fix...[0m
+[0;32mI (206649) GPS: Waiting for GPS fix...[0m
+[0;32mI (207649) GPS: Waiting for GPS fix...[0m
+[0;32mI (208649) GPS: Waiting for GPS fix...[0m
+[0;32mI (209649) GPS: Waiting for GPS fix...[0m
+[0;32mI (210649) GPS: Waiting for GPS fix...[0m
+[0;32mI (211649) GPS: Waiting for GPS fix...[0m
+[0;32mI (212649) GPS: Waiting for GPS fix...[0m
+[0;32mI (213649) GPS: Waiting for GPS fix...[0m
+[0;32mI (214649) GPS: Waiting for GPS fix...[0m
+[0;32mI (215649) GPS: Waiting for GPS fix...[0m
+[0;32mI (216649) GPS: Waiting for GPS fix...[0m
+[0;32mI (217649) GPS: Waiting for GPS fix...[0m
+[0;32mI (218649) GPS: Waiting for GPS fix...[0m
+[0;32mI (219649) GPS: Waiting for GPS fix...[0m
+[0;32mI (220649) GPS: Waiting for GPS fix...[0m
+[0;32mI (221649) GPS: Waiting for GPS fix...[0m
+[0;32mI (222649) GPS: Waiting for GPS fix...[0m
+[0;32mI (223649) GPS: Waiting for GPS fix...[0m
+[0;32mI (224649) GPS: Waiting for GPS fix...[0m
+[0;32mI (225649) GPS: Waiting for GPS fix...[0m
+[0;32mI (226649) GPS: Waiting for GPS fix...[0m
+[0;32mI (227649) GPS: Waiting for GPS fix...[0m
+[0;32mI (228649) GPS: Waiting for GPS fix...[0m
+[0;32mI (229649) GPS: Waiting for GPS fix...[0m
+[0;32mI (230649) GPS: Waiting for GPS fix...[0m
+[0;32mI (231649) GPS: Waiting for GPS fix...[0m
+[0;32mI (232649) GPS: Waiting for GPS fix...[0m
+[0;32mI (233649) GPS: Waiting for GPS fix...[0m
+[0;32mI (234649) GPS: Waiting for GPS fix...[0m
+[0;32mI (235649) GPS: Waiting for GPS fix...[0m
+[0;32mI (236649) GPS: Waiting for GPS fix...[0m
+[0;32mI (237649) GPS: Waiting for GPS fix...[0m
+[0;32mI (238649) GPS: Waiting for GPS fix...[0m
+[0;32mI (239649) GPS: Waiting for GPS fix...[0m
+[0;32mI (240649) GPS: Waiting for GPS fix...[0m
+[0;32mI (241649) GPS: Waiting for GPS fix...[0m
+[0;32mI (242649) GPS: Waiting for GPS fix...[0m
+[0;32mI (243649) GPS: Waiting for GPS fix...[0m
+[0;32mI (244659) GPS: Waiting for GPS fix...[0m
+[0;32mI (245649) GPS: Waiting for GPS fix...[0m
+[0;32mI (246659) GPS: Waiting for GPS fix...[0m
+[0;32mI (247659) GPS: Waiting for GPS fix...[0m
+�������������������k�����������k�����k��k�k��k��������k����������k����k��k�������k��k������k�������k����k��k��k�k����k����k��k��k��k���������k�����k��k��k��k��k����k��k��k�����������k����k���������k��k�������k��k��k����k�������k�����k���k��k��������������������k�������k�k������k��k����k������k�����k��k��k��k��k��k�����k������������k������k�����k��k��k����k��k������k��k������k����k���k����k��k�k����k���k��k��������k�k��k�������������k��k��k�����k��k��k�������������k������k��k������������������k��k��������k����k�k��k��k�����������k����k�k��������������k��k��k����k������������k��k��k�����������k��k������k�����k���������k��k��k�������������k����k��k��������k����k��k��k��k��k��k�������k��k�������������k�������k�����������k��k����k�����������k������k�����k������������k����k����������k�k��k������k��������k����k������k���������k����k��k�k��k��k�������k��k����k��������������k����k������k��k��k��k������������k��k��k��k��k�����k����k�������������������k��������k��k�����k��k������������������k�����k���������k��k��k������k��������k��k��k��k��k���������������������k������k��k��k�����k����k�����k������k����k����k��k��k��������k��������k�����������������k�k��k�������k��k��k��k������k�����k����k�����k���������k��k���k�k������k��k����k�k�k��k��������������������������k���k�k��������k��k��k�k��k��k��������k��k������k��k����k�k�k��k����k��k�k�k�����������k��k�k�����k����k�������������k�k������k�k�������������k��k����k������������k������k������k����k�������������k�����k�k��k�������k��k�k��k�k��k����k��k��k��k������k�������������k������������������������k������k�����������������k���������������k��k����k��k������k��������k�����������k��k��k���������k��k���k����k��k�������k��k�����k���������k��k����k�kR�kR�kR�kR�Z��Z���Z��kRkVkV�V�V�^�^�k^�k^�k�V�kR�kR�k��R�kZ�Z�kZ���Rk�kV�k����V�k^�^�^�k^�k��V�R�kR�kR�kR�kZ�kZ�Z�kZkR�k�kV�kV��V�kV��^��^�k^�k��V�kV�RkR��R��Z��Z�kZ�kZ�kR���V�kV�kV�kV�k^�k^�k���V�kV�kR�R�kR�kR�kZ�k�k���R�k������V�k�k^�^�k^��^�k��V�kR�kR�kR�kR�kZ�kZ�k��Z�R�k��V���V�kVk^�k^�k^�k��V��V���RkR�R�k��Z�ZkZ���R�kV�k�V�k�^�k^�^�^�V�kV�kR�kR�kR�kR�kZ��kZ�kZ��R�R�kV�kV�kV�k�k^�k�k^�k����V���k�kR�R�kZ�kZ�kZ�kZ��R�kRkVkV���V�k^^�^k^kV�k��R���R�kRkZ�k�k�kZkR�kR�kVkV��V�k�k^�^�k^�^kVkV�kR�k��R��R�kZ����Z�Z�R�RkV�kV�kV��k�k^�k�k^�k���k�R���kR�kZ�Z�kZ�Z�k���kV�kV�kV�kV�k^�k^�k^�k�kV�kV�kR�R��R�kR�Z�kZ�kZ�kZ�kR�kR�V�V�kV�k�^�kk^��^�kV�kV���R�kR�kR����Z�Z�k��R�kR�kV��V�kV�kV���^����kVkV�kR���R�kR�kZ���kZ�kZ��R�kRkV�k������^k^k^k�kV���R�k��R����Z�k���kR��V�kV��V�k^�k�k^������V�kR�kRk����Z�k�R���V�kV���V�k�^k^�k��V���kR�kR�k�kR�k�k�kZ����R�kR��V�kV�kV�V����k��^�kVk�����kR�kR��kZkZ�kZ�k�kR�V��V�kV�kV���k�^k^kV�kV�kR�k�R��R�����Z�kZ�R�k�k��V�kV��V�^�k^�^�k^�k�V��R�kR�kR�R�kZ�Z�kZ��Z�kR�kRkV�k�kV��V�^�k����^kV�kV�kR�kR�kR�RZZ�kZ��Z�kRkR�k��kV��k^�k�k^�k^kV�kV�kR��R�kRk��Z��Z�kZk��R�kR�kVkV�kV�k������^k�VkV��R�R��R��R��k�kZ�kR�R�k�kV���V��^�^��^k^�k�k���kR�kR��kZ�Z�kZkZ�kR�kR�k�V��V�k�k^��^�k��V�kV�R�kR�kR�R�kkZ�Z�Z�k�k�kV�k��V�k�k��^k^�k^�kV�kV�kR�R�R�kR�Z�kZ���Z�k�kR��V��VkV�kV���^�k^�V���R�kR�kkR�kZ�kZ�k��Z�R�kR�kV�kV�k��V�k^k^k^�k^�kV�k����R�kR�k������Z�kR�kR�kV�V�kV�kV�^�k^�^�k�k��V�R�kR�k�kR�Z�kZ�k�kZ�kR�k��V����V�k��^�^�^k^V��kR���kR�k���k�k�k�kR�R�kV�kV�V�kV����k��^�kV�V�kR�kR�kR�kR�kZkZkZ�kZ�kR�k�kV�kV��kV�k�^�k^���kV�kV���R�kRkR�k��Z�kZ�kZ�kR�R��V�kV�kV�kV���k�k^k^�k�kV�kR��R�k�kR�kZkZ�kkZ��kk��V���k��^�k^�k�^V�kV�R�kR�kR�k��Z�Z���kRkRk��V�kV�kV�^��^�k���V�kV�kR�kRkR�k��Z�kZ�kZ��k��R�kV�V��kV�k^�k^�k^�^��V�k���kR����R�kZ�Zk��Z�kR�kR�kV�k�k������^�����V�kV�kR�R�k�k�kZ�kZ�k�k��R�k����V�����^�k�����k�kV�k��R�R�kR�kkZ����Z�kR��kV�V�V�kV�k���k�^�kV�kV�k�kR���kR�Z�kZ�kZ��Z�kR��R�kV�kV�kV�kV�k^�k^��^�^��V���R�k�������k�kZ�kZk���VkV�kV�kV�^�k^�k^�^�k�kV��R�kR�R�k���kZkZk��R�kR�V�kV�kk�^�^�k^��^kVk�kR�kR�kR��R�kZ�Z�kZ�Z�kR�kI (599) GPS: Waiting for GPS fix...
+[0;32mI (1329) GPS: Waiting for GPS fix...[0m
+[0;32mI (2329) GPS: Waiting for GPS fix...[0m
+[0;32mI (3289) GPS: Waiting for GPS fix...[0m
+[0;32mI (4289) GPS: Waiting for GPS fix...[0m
+[0;32mI (5289) GPS: Waiting for GPS fix...[0m
+[0;32mI (6289) GPS: Waiting for GPS fix...[0m
+[0;32mI (7289) GPS: Waiting for GPS fix...[0m
+[0;32mI (8289) GPS: Waiting for GPS fix...[0m
+[0;32mI (9289) GPS: Waiting for GPS fix...[0m
+[0;32mI (10289) GPS: Waiting for GPS fix...[0m
+[0;32mI (11289) GPS: Waiting for GPS fix...[0m
+[0;32mI (12289) GPS: Waiting for GPS fix...[0m
+[0;32mI (13289) GPS: Waiting for GPS fix...[0m
+[0;32mI (14299) GPS: Waiting for GPS fix...[0m
+[0;32mI (15289) GPS: Waiting for GPS fix...[0m

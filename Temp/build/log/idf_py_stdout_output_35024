@@ -1,0 +1,253 @@
+Command: /home/varun/.espressif/python_env/idf5.5_py3.10_env/bin/python /home/varun/esp/esp-idf/tools/idf_monitor.py -p /dev/ttyACM0 -b 115200 --toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 --revision 0 /home/varun/Thadomal_hackathon/Temp/build/Temp.elf /home/varun/Thadomal_hackathon/Temp/build/bootloader/bootloader.elf -m '/home/varun/.espressif/python_env/idf5.5_py3.10_env/bin/python' '/home/varun/esp/esp-idf/tools/idf.py'
+�5
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x9 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x159c
+load:0x403c8700,len:0xd24
+load:0x403cb700,len:0x2f48
+entry 0x403c8924
+[0;32mI (24) boot: ESP-IDF v5.5 2nd stage bootloader[0m
+[0;32mI (25) boot: compile time Feb 25 2026 23:28:37[0m
+[0;32mI (25) boot: Multicore bootloader[0m
+[0;32mI (25) boot: chip revision: v0.2[0m
+[0;32mI (27) boot: efuse block revision: v1.3[0m
+[0;32mI (31) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (35) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (39) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (42) boot: Enabling RNG early entropy source...[0m
+[0;32mI (47) boot: Partition Table:[0m
+[0;32mI (50) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (69) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (75) boot: End of partition table[0m
+[0;32mI (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a470h ( 42096) map[0m
+[0;32mI (94) esp_image: segment 1: paddr=0001a498 vaddr=3fc92700 size=02ad8h ( 10968) load[0m
+[0;32mI (96) esp_image: segment 2: paddr=0001cf78 vaddr=40374000 size=030a0h ( 12448) load[0m
+[0;32mI (104) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=1823ch ( 98876) map[0m
+[0;32mI (126) esp_image: segment 4: paddr=00038264 vaddr=403770a0 size=0b558h ( 46424) load[0m
+[0;32mI (136) esp_image: segment 5: paddr=000437c4 vaddr=600fe000 size=00020h (    32) load[0m
+[0;32mI (142) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (142) boot: Disabling RNG early entropy source...[0m
+[0;32mI (154) cpu_start: Multicore app[0m
+[0;32mI (163) cpu_start: Pro cpu start user code[0m
+[0;32mI (163) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (163) app_init: Application information:[0m
+[0;32mI (164) app_init: Project name:     Temp[0m
+[0;32mI (167) app_init: App version:      1[0m
+[0;32mI (170) app_init: Compile time:     Feb 25 2026 23:28:33[0m
+[0;32mI (176) app_init: ELF file SHA256:  e39fd558f...[0m
+[0;32mI (180) app_init: ESP-IDF:          v5.5[0m
+[0;32mI (184) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (187) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (191) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (195) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (202) heap_init: At 3FC95AA8 len 00053C68 (335 KiB): RAM[0m
+[0;32mI (207) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (212) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (217) heap_init: At 600FE020 len 00001FC8 (7 KiB): RTCRAM[0m
+[0;32mI (223) spi_flash: detected chip: boya[0m
+[0;32mI (226) spi_flash: flash io: dio[0m
+[0;33mW (229) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (241) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (247) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (254) main_task: Started on CPU0[0m
+[0;32mI (274) main_task: Calling app_main()[0m
+Temperature: 30.25 °C
+Temperature: 30.19 °C
+Temperature: 30.19 °C
+Temperature: 30.12 °C
+Temperature: 30.12 °C
+Temperature: 30.12 °C
+Temperature: 30.12 °C
+Temperature: 30.06 °C
+Temperature: 30.06 °C
+Temperature: 30.06 °C
+Temperature: 30.06 °C
+Temperature: 30.00 °C
+Temperature: 30.00 °C
+Temperature: 30.00 °C
+Temperature: 30.00 °C
+Temperature: 30.00 °C
+Temperature: 29.94 °C
+Temperature: 29.94 °C
+Temperature: 29.94 °C
+Temperature: 29.94 °C
+Temperature: 29.88 °C
+Temperature: 29.88 °C
+Temperature: 29.88 °C
+Temperature: 29.88 °C
+Temperature: 29.81 °C
+Temperature: 29.88 °C
+Temperature: 29.81 °C
+Temperature: 29.81 °C
+Temperature: 29.75 °C
+Temperature: 29.75 °C
+Temperature: 29.75 °C
+Temperature: 29.69 °C
+Temperature: 29.75 °C
+Temperature: 29.69 °C
+Temperature: 29.69 °C
+Temperature: 29.69 °C
+Temperature: 29.62 °C
+Temperature: 29.62 °C
+Temperature: 29.62 °C
+Temperature: 29.62 °C
+Temperature: 29.62 °C
+Temperature: 29.56 °C
+Temperature: 29.56 °C
+Temperature: 29.69 °C
+Temperature: 30.25 °C
+Temperature: 31.31 °C
+Temperature: 32.19 °C
+Temperature: 33.06 °C
+Temperature: 34.00 °C
+Temperature: 34.94 °C
+Temperature: 35.44 °C
+Temperature: 35.50 °C
+Temperature: 36.06 °C
+Temperature: 36.81 °C
+Temperature: 37.50 °C
+Temperature: 38.06 °C
+Temperature: 38.12 °C
+Temperature: 37.94 °C
+Temperature: 37.69 °C
+Temperature: 37.38 °C
+Temperature: 37.06 °C
+Temperature: 36.75 °C
+Temperature: 36.44 °C
+Temperature: 36.19 °C
+Temperature: 35.94 °C
+Temperature: 35.69 °C
+Temperature: 35.44 °C
+Temperature: 35.31 °C
+Temperature: 35.19 °C
+Temperature: 35.06 °C
+Temperature: 35.06 °C
+Temperature: 35.19 °C
+Temperature: 35.31 °C
+Temperature: 35.50 °C
+Temperature: 35.56 °C
+Temperature: 35.75 °C
+Temperature: 35.88 °C
+Temperature: 36.00 °C
+Temperature: 36.06 °C
+Temperature: 36.19 °C
+Temperature: 36.25 °C
+Temperature: 36.31 °C
+Temperature: 36.25 °C
+Temperature: 36.12 °C
+Temperature: 36.00 °C
+Temperature: 35.88 °C
+Temperature: 35.75 °C
+Temperature: 35.69 °C
+Temperature: 35.62 °C
+Temperature: 35.50 °C
+Temperature: 35.44 °C
+Temperature: 35.31 °C
+Temperature: 35.19 °C
+Temperature: 35.06 °C
+Temperature: 35.00 °C
+Temperature: 34.94 °C
+Temperature: 34.81 °C
+Temperature: 34.75 °C
+Temperature: 34.62 °C
+Temperature: 34.56 °C
+Temperature: 34.44 °C
+Temperature: 34.31 °C
+Temperature: 34.25 °C
+Temperature: 34.19 °C
+Temperature: 34.06 °C
+Temperature: 34.06 °C
+Temperature: 34.00 °C
+Temperature: 34.00 °C
+Temperature: 33.94 °C
+Temperature: 33.81 °C
+Temperature: 33.56 °C
+Temperature: 33.38 °C
+Temperature: 33.12 °C
+Temperature: 32.88 °C
+Temperature: 32.62 °C
+Temperature: 32.38 °C
+Temperature: 32.19 °C
+Temperature: 32.00 °C
+Temperature: 31.81 °C
+Temperature: 31.62 °C
+Temperature: 31.44 °C
+Temperature: 31.25 °C
+Temperature: 31.12 °C
+Temperature: 31.00 °C
+Temperature: 30.81 °C
+Temperature: 30.69 °C
+Temperature: 30.69 °C
+Temperature: 30.62 °C
+Temperature: 30.56 °C
+Temperature: 30.50 °C
+Temperature: 30.44 °C
+Temperature: 30.38 °C
+Temperature: 30.38 °C
+Temperature: 30.38 °C
+Temperature: 30.38 °C
+Temperature: 30.38 °C
+Temperature: 30.31 °C
+Temperature: 30.31 °C
+Temperature: 30.25 °C
+Temperature: 30.25 °C
+Temperature: 30.19 °C
+Temperature: 30.19 °C
+Temperature: 30.12 °C
+Temperature: 30.12 °C
+Temperature: 30.06 °C
+Temperature: 30.06 °C
+Temperature: 30.00 °C
+Temperature: 30.00 °C
+Temperature: 30.00 °C
+Temperature: 29.94 °C
+Temperature: 29.81 °C
+Temperature: 29.50 °C
+Temperature: 29.12 °C
+Temperature: 28.69 °C
+Temperature: 28.31 °C
+Temperature: 27.88 °C
+Temperature: 27.50 °C
+Temperature: 27.06 °C
+Temperature: 26.69 °C
+Temperature: 26.31 °C
+Temperature: 25.94 °C
+Temperature: 25.56 °C
+Temperature: 25.25 °C
+Temperature: 25.00 °C
+Temperature: 24.81 °C
+Temperature: 24.56 °C
+Temperature: 24.31 °C
+Temperature: 24.06 °C
+Temperature: 23.81 °C
+Temperature: 23.56 °C
+Temperature: 23.31 °C
+Temperature: 23.06 °C
+Temperature: 22.81 °C
+Temperature: 22.62 °C
+Temperature: 22.38 °C
+Temperature: 22.19 °C
+Temperature: 22.00 °C
+Temperature: 21.81 °C
+Temperature: 21.62 °C
+Temperature: 21.44 °C
+Temperature: 21.31 °C
+Temperature: 21.19 °C
+Temperature: 21.06 °C
+Temperature: 20.88 °C
+Temperature: 20.75 °C
+Temperature: 20.62 °C
+Temperature: 21.38 °C
+Temperature: 22.00 °C
+Temperature: 22.38 °C
+Temperature: 22.62 °C
+Temperature: 22.81 °C
+Temperature: 23.00 °C
+Temperature: 23.12 °C
+Temperature: 23.25 °C
+Temperature: 23.44 °C
