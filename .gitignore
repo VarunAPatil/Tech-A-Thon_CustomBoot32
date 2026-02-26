@@ -1,0 +1,22 @@
+# ESP-IDF build folder
+build/
+
+# SDK config files
+sdkconfig
+sdkconfig.old
+sdkconfig.defaults
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+
+# Compiled binaries
+*.bin
+*.elf
+*.map
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
