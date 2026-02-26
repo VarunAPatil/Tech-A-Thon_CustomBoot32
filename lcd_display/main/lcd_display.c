@@ -36,6 +36,7 @@
 #include "esp_lcd_ili9341.h"
 
 #include "lvgl.h"
+#include "cascadia_mono.c"
 
 
 static const char *TAG = "ILI9341";
@@ -189,7 +190,7 @@ static void ui_create(void)
     lv_obj_t *lbl_title = lv_label_create(header);
     lv_label_set_text(lbl_title, "MONITOR");
     lv_obj_set_style_text_color(lbl_title, COL_TEXT_HI, 0);
-    lv_obj_set_style_text_font(lbl_title, &lv_font_montserrat_22, 0);
+    lv_obj_set_style_text_font(lbl_title, &cascadia_mono, 0);
     lv_obj_set_style_text_letter_space(lbl_title, 5, 0);
     lv_obj_align(lbl_title, LV_ALIGN_CENTER, 0, 0);
 
@@ -385,7 +386,7 @@ static void ui_create(void)
     lv_obj_t *lbl_footer = lv_label_create(footer);
     lv_label_set_text(lbl_footer, "VAXIQ");
     lv_obj_set_style_text_color(lbl_footer, COL_TEXT_LO, 0);
-    lv_obj_set_style_text_font(lbl_footer, &lv_font_montserrat_22, 0);
+    lv_obj_set_style_text_font(lbl_footer, &cascadia_mono, 0);
     lv_obj_set_style_text_letter_space(lbl_footer, 2, 0);
     lv_obj_align(lbl_footer, LV_ALIGN_CENTER, 0, 0);
 }
