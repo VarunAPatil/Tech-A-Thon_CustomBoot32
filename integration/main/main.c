@@ -9,6 +9,7 @@
 #include "gps_task.h"
 #include "shared_data.h"
 #include "ota_task.h"
+#include "firebase_task.h"
 
 SemaphoreHandle_t sensor_data_mutex;
 int shared_temp_x10 = 0;
@@ -52,4 +53,9 @@ void app_main(void)
     xTaskCreatePinnedToCore(ota_task, "ota_task", OTA_TASK_STACK_SIZE,
                             NULL, OTA_TASK_PRIORITY_LOW,
                             &ota_task_handle, 0);
+
+    // Start Firebase Task on Core 0 at priority 2.
+    // Snapshots shared sensor data every 5 s and PUTs to Firebase RTDB.
+    xTaskCreatePinnedToCore(firebase_task, "firebase_task", 6144,
+                            NULL, 2, NULL, 0);
 }
