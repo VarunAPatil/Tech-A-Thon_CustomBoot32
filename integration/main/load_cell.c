@@ -6,6 +6,7 @@
 #include "esp_rom_sys.h"
 #include "math.h"
 #include "load_cell.h"
+#include "shared_data.h"
 
 #define DT_PIN   4
 #define SCK_PIN  5
@@ -134,6 +135,12 @@ void load_cell_task(void *pvParameters)
         last_cells = best_cells;
         ESP_LOGI(TAG, "Weight: %.2f", weight);
         ESP_LOGI(TAG, "Cells: %d", last_cells);
+
+        // Update shared data
+        if (sensor_data_mutex != NULL && xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
+            shared_units = last_cells;
+            xSemaphoreGive(sensor_data_mutex);
+        }
 
         // Proper FreeRTOS delay, yielding execution to other tasks
         vTaskDelay(pdMS_TO_TICKS(500)); 

@@ -4,17 +4,44 @@
 
 #include "load_cell.h"
 #include "temp.h"
+#include "peltier.h"
+#include "lcd_task.h"
+#include "gps_task.h"
+#include "shared_data.h"
+
+SemaphoreHandle_t sensor_data_mutex;
+int shared_temp_x10 = 0;
+int shared_units = 0;
+char shared_gps_time[16] = "--";
+char shared_gps_lat[20] = "----";
+char shared_gps_lon[20] = "----";
+char shared_gps_ns[4] = "";
+char shared_gps_ew[4] = "";
 
 void app_main(void)
 {
-    printf("Starting Integration Project (Load Cell + Temp)...\n");
+    printf("Starting Dual-Core Integration Project...\n");
 
-    // Start Load Cell Task (higher priority than temp for more strict timing, or equal)
-    // Allocating 4096 bytes for stack
-    xTaskCreate(load_cell_task, "load_cell_task", 4096, NULL, 5, NULL);
+    // Initialize shared data mutex
+    sensor_data_mutex = xSemaphoreCreateMutex();
+    if (sensor_data_mutex == NULL) {
+        printf("Failed to create sensor data mutex!\n");
+        return;
+    }
 
-    // Start Temperature Sensor task
-    xTaskCreate(temp_task, "temp_task", 4096, NULL, 4, NULL);
+    // Start Peltier Task on Core 0 (PRO_CPU) with Low Priority (2)
+    xTaskCreatePinnedToCore(peltier_task, "peltier_task", 4096, NULL, 2, NULL, 0);
 
-    // The main task will exit or idle, but the created tasks will continue running.
+    // Start Load Cell Task on Core 1 (APP_CPU) with High Priority (5)
+    xTaskCreatePinnedToCore(load_cell_task, "load_cell_task", 4096, NULL, 5, NULL, 1);
+
+    // Start Temperature Task on Core 1 (APP_CPU) with High Priority (4)
+    xTaskCreatePinnedToCore(temp_task, "temp_task", 4096, NULL, 4, NULL, 1);
+
+    // Start GPS Task on Core 1
+    xTaskCreatePinnedToCore(gps_task, "gps_task", 4096, NULL, 4, NULL, 1);
+
+    // Start LCD Task on Core 1 (APP_CPU) with Normal Priority (3)
+    // Allocating a larger stack for LVGL (e.g., 8192)
+    xTaskCreatePinnedToCore(lcd_task, "lcd_task", 8192, NULL, 3, NULL, 1);
 }

@@ -4,6 +4,7 @@
 #include "driver/gpio.h"
 #include "esp_rom_sys.h"
 #include "temp.h"
+#include "shared_data.h"
 
 #define DS_PIN 6
 
@@ -102,6 +103,10 @@ void temp_task(void *pvParameters)
         float temp = ds18b20_read_temp();
         if (temp > -100) {
             printf("Temperature: %.2f °C\n", temp);
+            if (sensor_data_mutex != NULL && xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
+                shared_temp_x10 = (int)(temp * 10);
+                xSemaphoreGive(sensor_data_mutex);
+            }
         } else {
             printf("Temp Sensor not detected\n");
         }
