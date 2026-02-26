@@ -6,7 +6,7 @@
 #include "driver/gpio.h"
 
 // Fan PWM Settings
-#define PWM_GPIO        5
+#define PWM_GPIO        7
 #define PWM_FREQ        25000
 #define PWM_RESOLUTION  LEDC_TIMER_8_BIT
 #define PWM_CHANNEL     LEDC_CHANNEL_0
@@ -14,7 +14,7 @@
 #define PWM_MODE        LEDC_LOW_SPEED_MODE
 
 // Peltier ON/OFF Settings
-#define PELTIER_GPIO    6
+#define PELTIER_GPIO    15
 
 void hardware_init()
 {

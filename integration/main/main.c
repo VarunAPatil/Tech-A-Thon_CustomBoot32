@@ -8,6 +8,7 @@
 #include "lcd_task.h"
 #include "gps_task.h"
 #include "shared_data.h"
+#include "ota_task.h"
 
 SemaphoreHandle_t sensor_data_mutex;
 int shared_temp_x10 = 0;
@@ -35,8 +36,8 @@ void app_main(void)
     // Start Load Cell Task on Core 1 (APP_CPU) with High Priority (5)
     xTaskCreatePinnedToCore(load_cell_task, "load_cell_task", 4096, NULL, 5, NULL, 1);
 
-    // Start Temperature Task on Core 1 (APP_CPU) with High Priority (4)
-    xTaskCreatePinnedToCore(temp_task, "temp_task", 4096, NULL, 4, NULL, 1);
+    // Start Temperature Task on Core 0 (PRO_CPU) with High Priority (4)
+    xTaskCreatePinnedToCore(temp_task, "temp_task", 4096, NULL, 4, NULL, 0);
 
     // Start GPS Task on Core 1
     xTaskCreatePinnedToCore(gps_task, "gps_task", 4096, NULL, 4, NULL, 1);
@@ -44,4 +45,11 @@ void app_main(void)
     // Start LCD Task on Core 1 (APP_CPU) with Normal Priority (3)
     // Allocating a larger stack for LVGL (e.g., 8192)
     xTaskCreatePinnedToCore(lcd_task, "lcd_task", 8192, NULL, 3, NULL, 1);
+
+    // Start OTA Task on Core 0 at the LOWEST priority (1).
+    // It idles on the webserver; runtime raises to priority 6 when
+    // an update is actually being flashed (beats all sensor tasks).
+    xTaskCreatePinnedToCore(ota_task, "ota_task", OTA_TASK_STACK_SIZE,
+                            NULL, OTA_TASK_PRIORITY_LOW,
+                            &ota_task_handle, 0);
 }
