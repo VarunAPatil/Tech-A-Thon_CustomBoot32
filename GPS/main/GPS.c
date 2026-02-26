@@ -6,7 +6,7 @@
 
 #define UART_NUM UART_NUM_2
 #define TXD_PIN 17
-#define RXD_PIN 16
+#define RXD_PIN 18
 #define BUF_SIZE 1024
 
 static void parse_gga(char *line)

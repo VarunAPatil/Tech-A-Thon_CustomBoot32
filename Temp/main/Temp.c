@@ -4,7 +4,7 @@
 #include "driver/gpio.h"
 #include "esp_rom_sys.h"
 
-#define DS_PIN 4
+#define DS_PIN 6
 
 static void ds_delay_us(int us)
 {

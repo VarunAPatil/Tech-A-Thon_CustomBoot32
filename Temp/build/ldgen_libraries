@@ -159,8 +159,4 @@
 /home/varun/Thadomal_hackathon/Temp/build/esp-idf/usb/libusb.a
 /home/varun/Thadomal_hackathon/Temp/build/esp-idf/wifi_provisioning/libwifi_provisioning.a
 /home/varun/Thadomal_hackathon/Temp/build/esp-idf/json/libjson.a
-/home/varun/Thadomal_hackathon/Temp/build/esp-idf/espressif__onewire_bus/libespressif__onewire_bus.a
-/home/varun/Thadomal_hackathon/Temp/build/esp-idf/espressif__ds18b20/libespressif__ds18b20.a
-/home/varun/Thadomal_hackathon/Temp/build/esp-idf/espressif__onewire_bus/libespressif__onewire_bus.a
 /home/varun/Thadomal_hackathon/Temp/build/esp-idf/main/libmain.a
-/home/varun/Thadomal_hackathon/Temp/build/esp-idf/espressif__ds18b20/libespressif__ds18b20.a

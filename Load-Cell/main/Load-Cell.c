@@ -4,12 +4,15 @@
 #include "driver/gpio.h"
 #include "esp_log.h"
 #include "esp_rom_sys.h"
+#include "math.h"
 
 #define DT_PIN   4
 #define SCK_PIN  5
+#define CELL_WEIGHT 35.0f
+#define MAX_CELLS   50
 
 static const char *TAG = "HX711";
-
+static int last_cells = 0;
 /* ===== CHANGE THESE AFTER MEASUREMENT ===== */
 #define OFFSET   -2760
 
@@ -58,8 +61,8 @@ int32_t hx711_read_avg(int samples)
 
 float hx711_get_weight()
 {
-    int32_t raw = hx711_read_avg(10);   // smooth output
-    // ESP_LOGI("RAW", "%ld", raw);
+    int32_t raw = hx711_read_avg(12);   // smooth output
+    // ESP_LOGI("RAW", "%ld", raw);    
     return (raw - OFFSET) / SCALE;
 }
 
@@ -78,8 +81,45 @@ void app_main(void)
     ESP_LOGI(TAG, "HX711 calibrated scale started");
 
     while (1) {
-        float weight = hx711_get_weight();
-        ESP_LOGI("WEIGHT", "%.2f grams", weight);
-        vTaskDelay(pdMS_TO_TICKS(100));
+
+    float weight = hx711_get_weight();
+
+    float net = weight - 70.0f;
+    if (net < 0)
+        net = 0;
+
+    int best_cells = last_cells;
+float smallest_error = 1e9;
+
+
+for (int i = 0; i <= MAX_CELLS; i++) {
+
+    float expected = i * CELL_WEIGHT;
+    float error = fabs(net - expected);
+
+    if (error < smallest_error) {
+        smallest_error = error;
+        best_cells = i;
     }
+}
+
+/* Reject unrealistic jumps (noise protection) */
+if (best_cells > last_cells) {
+    last_cells++;      // increase slowly
+}
+else if (best_cells < last_cells) {
+    last_cells--;      // decrease slowly
+}
+
+/* Optional: reject if too far from any expected weight */
+if (smallest_error > 15.0f) {
+    best_cells = last_cells;
+}
+
+last_cells = best_cells;
+    ESP_LOGI(TAG, "Weight: %.2f", weight);
+    ESP_LOGI(TAG, "Cells: %d", last_cells);
+
+    vTaskDelay(pdMS_TO_TICKS(100));
+}   
 }
