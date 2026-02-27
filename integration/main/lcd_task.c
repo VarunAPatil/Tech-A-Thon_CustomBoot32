@@ -85,7 +85,7 @@ static lv_obj_t *label_units_val;
 static lv_obj_t *bar_temp;
 static lv_obj_t *label_gps_lat;
 static lv_obj_t *label_gps_lon;
-static lv_obj_t *label_gps_time;
+static lv_obj_t *label_gps_sats;
 
 
 /* -----------------------------------------------
@@ -93,13 +93,15 @@ static lv_obj_t *label_gps_time;
  * temp_x10 : temperature * 10  (e.g. 235 = 23.5 C)
  * units     : integer unit count
  * ----------------------------------------------- */
-void ui_update_values(int temp_x10, int units, const char *lat, const char *ns, const char *lon, const char *ew, const char *time)
+void ui_update_values(int temp_x100, int units, const char *lat, const char *ns, const char *lon, const char *ew, int sats)
 {
-    /* Temperature: "23.5" */
+    /* Temperature: "23.44" — temp_x100 e.g. 2344 */
     char tbuf[16];
-    snprintf(tbuf, sizeof(tbuf), "%d.%d",
-             temp_x10 / 10,
-             (temp_x10 < 0 ? -temp_x10 : temp_x10) % 10);
+    int absval = (temp_x100 < 0) ? -temp_x100 : temp_x100;
+    snprintf(tbuf, sizeof(tbuf), "%s%d.%02d",
+             temp_x100 < 0 ? "-" : "",
+             absval / 100,
+             absval % 100);
     lv_label_set_text(label_temp_val, tbuf);
 
     /* Units: "4" */
@@ -107,8 +109,8 @@ void ui_update_values(int temp_x10, int units, const char *lat, const char *ns, 
     snprintf(ubuf, sizeof(ubuf), "%d", units);
     lv_label_set_text(label_units_val, ubuf);
 
-    /* Progress bar (clamp 0-100 C) */
-    int bv = temp_x10 / 10;
+    /* Progress bar (clamp 0–100 °C) */
+    int bv = temp_x100 / 100;
     if (bv <   0) bv = 0;
     if (bv > 100) bv = 100;
     lv_bar_set_value(bar_temp, bv, LV_ANIM_ON);
@@ -122,9 +124,9 @@ void ui_update_values(int temp_x10, int units, const char *lat, const char *ns, 
     snprintf(lonbuf, sizeof(lonbuf), "LON: %s %s", lon, ew);
     lv_label_set_text(label_gps_lon, lonbuf);
 
-    char timebuf[32];
-    snprintf(timebuf, sizeof(timebuf), "TIME: %s", time);
-    lv_label_set_text(label_gps_time, timebuf);
+    char satbuf[16];
+    snprintf(satbuf, sizeof(satbuf), "SAT: %d", sats);
+    lv_label_set_text(label_gps_sats, satbuf);
 }
 
 
@@ -404,11 +406,11 @@ static void ui_create(void)
     lv_obj_set_style_text_font(label_gps_lon, &lv_font_montserrat_14, 0);
     lv_obj_align(label_gps_lon, LV_ALIGN_TOP_LEFT, 16, 40);
 
-    label_gps_time = lv_label_create(card_gps);
-    lv_label_set_text(label_gps_time, "TIME: --");
-    lv_obj_set_style_text_color(label_gps_time, COL_BLUE_ICE, 0);
-    lv_obj_set_style_text_font(label_gps_time, &lv_font_montserrat_14, 0);
-    lv_obj_align(label_gps_time, LV_ALIGN_TOP_LEFT, 16, 55);
+    label_gps_sats = lv_label_create(card_gps);
+    lv_label_set_text(label_gps_sats, "SAT: --");
+    lv_obj_set_style_text_color(label_gps_sats, COL_BLUE_ICE, 0);
+    lv_obj_set_style_text_font(label_gps_sats, &lv_font_montserrat_14, 0);
+    lv_obj_align(label_gps_sats, LV_ALIGN_TOP_LEFT, 16, 55);
 
 
     /* ══════════════════════════════════════════
@@ -580,7 +582,7 @@ void lcd_task(void *pvParameters)
     /* ── Main Loop ── */
     int current_temp = 0;
     int current_units = 0;
-    char current_gps_time[16] = "--";
+    int current_gps_sats = 0;
     char current_gps_lat[20] = "----";
     char current_gps_ns[4] = "";
     char current_gps_lon[20] = "----";
@@ -589,9 +591,9 @@ void lcd_task(void *pvParameters)
     while (1)
     {
         if (xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-            current_temp = shared_temp_x10;
+            current_temp = shared_temp_x100;
             current_units = shared_units;
-            strcpy(current_gps_time, shared_gps_time);
+            current_gps_sats = shared_gps_sats;
             strcpy(current_gps_lat, shared_gps_lat);
             strcpy(current_gps_ns, shared_gps_ns);
             strcpy(current_gps_lon, shared_gps_lon);
@@ -599,7 +601,7 @@ void lcd_task(void *pvParameters)
             xSemaphoreGive(sensor_data_mutex);
         }
 
-        ui_update_values(current_temp, current_units, current_gps_lat, current_gps_ns, current_gps_lon, current_gps_ew, current_gps_time);
+        ui_update_values(current_temp, current_units, current_gps_lat, current_gps_ns, current_gps_lon, current_gps_ew, current_gps_sats);
 
         lv_timer_handler();
         vTaskDelay(pdMS_TO_TICKS(10));

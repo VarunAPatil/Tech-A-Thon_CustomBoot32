@@ -75,8 +75,7 @@ static float ds18b20_read_temp(void)
     ds_write_byte(0xCC); // Skip ROM
     ds_write_byte(0x44); // Convert T
 
-    // Wait for conversion. DS18B20 12-bit conversion takes up to 750ms.
-    // Instead of blocking loop/delay, use vTaskDelay, letting other tasks run!
+    // 12-bit conversion takes up to 750 ms
     vTaskDelay(pdMS_TO_TICKS(750));
 
     ds_reset();
@@ -100,18 +99,35 @@ void temp_task(void *pvParameters)
     temp_init();
 
     while (1) {
-        float temp = ds18b20_read_temp();
-        if (temp > -100) {
-            printf("Temperature: %.2f °C\n", temp);
-            if (sensor_data_mutex != NULL && xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-                shared_temp_x10 = (int)(temp * 10);
-                xSemaphoreGive(sensor_data_mutex);
-            }
-        } else {
-            printf("Temp Sensor not detected\n");
+        /* ---- Wait for firebase_task to release us ---------------------- */
+        // On first iteration the semaphore is pre-given in main, so we run
+        // immediately. After that we block here until firebase signals done.
+        if (sem_temp_go != NULL) {
+            xSemaphoreTake(sem_temp_go, portMAX_DELAY);
         }
-        
-        // Let other tasks run
-        vTaskDelay(pdMS_TO_TICKS(1000));
+
+        /* ---- Take a fresh temperature reading (~750 ms) --------------- */
+        float temp = ds18b20_read_temp();
+
+        /* ---- Write to shared_data ------------------------------------- */
+        if (sensor_data_mutex != NULL &&
+            xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
+
+            if (temp > -100) {
+                shared_temp_x100 = (int)(temp * 100);
+                printf("Temperature: %.2f C\n", temp);
+            } else {
+                printf("Temp Sensor not detected\n");
+            }
+            xSemaphoreGive(sensor_data_mutex);
+        }
+
+        /* ---- Signal firebase_task: temp reading is ready -------------- */
+        if (ready_mutex != NULL &&
+            xSemaphoreTake(ready_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
+
+            ready_temp = 1;
+            xSemaphoreGive(ready_mutex);
+        }
     }
 }

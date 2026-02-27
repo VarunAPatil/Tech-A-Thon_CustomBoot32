@@ -17,7 +17,7 @@ static const char *TAG = "HX711";
 static int last_cells = 0;
 #define OFFSET   -2760
 
-static const float SCALE = 
+static const float SCALE =
     (-40128.0f - (-2760.0f)) / 49.975f;
 
 void load_cell_init(void)
@@ -39,17 +39,14 @@ static int32_t hx711_read_raw()
 {
     int32_t data = 0;
 
-    // Wait until HX711 ready (DT LOW)
-    // Using a timeout to prevent absolute lockup
     int timeout = 100;
     while (gpio_get_level(DT_PIN) && timeout > 0) {
-        vTaskDelay(pdMS_TO_TICKS(1)); // Yield instead of busy-looping completely
+        vTaskDelay(pdMS_TO_TICKS(1));
         timeout--;
     }
 
     if (timeout <= 0) {
-       // ESP_LOGE(TAG, "HX711 Timeout waiting for DT LOW");
-       return 0; // Or some error indicator
+        return 0;
     }
 
     for (int i = 0; i < 24; i++) {
@@ -80,7 +77,7 @@ static int32_t hx711_read_avg(int samples)
     int valid_samples = 0;
     for (int i = 0; i < samples; i++) {
         int32_t val = hx711_read_raw();
-        if(val != 0) { // Naive timeout check based on our implementation above
+        if (val != 0) {
             sum += val;
             valid_samples++;
         }
@@ -91,7 +88,7 @@ static int32_t hx711_read_avg(int samples)
 
 static float hx711_get_weight()
 {
-    int32_t raw = hx711_read_avg(12);   // smooth output
+    int32_t raw = hx711_read_avg(12);
     return (raw - OFFSET) / SCALE;
 }
 
@@ -100,11 +97,17 @@ void load_cell_task(void *pvParameters)
     load_cell_init();
 
     while (1) {
+        /* ---- Wait for firebase_task to release us ---------------------- */
+        // Pre-given in main for first iteration; firebase gives it after upload.
+        if (sem_loadcell_go != NULL) {
+            xSemaphoreTake(sem_loadcell_go, portMAX_DELAY);
+        }
+
+        /* ---- Take a fresh weight reading ------------------------------- */
         float weight = hx711_get_weight();
 
         float net = weight - 70.0f;
-        if (net < 0)
-            net = 0;
+        if (net < 0) net = 0;
 
         int best_cells = last_cells;
         float smallest_error = 1e9;
@@ -120,29 +123,28 @@ void load_cell_task(void *pvParameters)
         }
 
         /* Reject unrealistic jumps (noise protection) */
-        if (best_cells > last_cells) {
-            last_cells++;      // increase slowly
-        }
-        else if (best_cells < last_cells) {
-            last_cells--;      // decrease slowly
-        }
+        if (best_cells > last_cells)      last_cells++;
+        else if (best_cells < last_cells) last_cells--;
 
-        /* Optional: reject if too far from any expected weight */
-        if (smallest_error > 15.0f) {
-            best_cells = last_cells;
-        }
+        if (smallest_error > 15.0f) best_cells = last_cells;
 
         last_cells = best_cells;
-        ESP_LOGI(TAG, "Weight: %.2f", weight);
-        ESP_LOGI(TAG, "Cells: %d", last_cells);
+        ESP_LOGI(TAG, "Weight: %.2f  Cells: %d", weight, last_cells);
 
-        // Update shared data
-        if (sensor_data_mutex != NULL && xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
+        /* ---- Write to shared_data ------------------------------------- */
+        if (sensor_data_mutex != NULL &&
+            xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
+
             shared_units = last_cells;
             xSemaphoreGive(sensor_data_mutex);
         }
 
-        // Proper FreeRTOS delay, yielding execution to other tasks
-        vTaskDelay(pdMS_TO_TICKS(500)); 
+        /* ---- Signal firebase_task: load-cell reading is ready --------- */
+        if (ready_mutex != NULL &&
+            xSemaphoreTake(ready_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
+
+            ready_loadcell = 1;
+            xSemaphoreGive(ready_mutex);
+        }
     }
 }

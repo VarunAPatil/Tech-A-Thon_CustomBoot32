@@ -3,10 +3,8 @@
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "freertos/queue.h"
 #include "driver/ledc.h"
 #include "driver/gpio.h"
-#include "driver/uart.h"
 #include "shared_data.h"
 
 // Fan PWM Settings
@@ -20,156 +18,84 @@
 // Peltier ON/OFF Settings
 #define PELTIER_GPIO    15
 
-#define EX_UART_NUM UART_NUM_0
-#define BUF_SIZE (1024)
+// Temperature thresholds (stored as temp × 100)
+#define TEMP_ON_X100   2200   // Turn Peltier ON  above 22.00 °C
+#define TEMP_OFF_X100  2000   // Turn Peltier OFF below 20.00 °C
 
-static QueueHandle_t uart0_queue;
-
-static void hardware_init()
+static void hardware_init(void)
 {
-    // --- Initialize Fan PWM ---
+    // --- Fan PWM ---
     ledc_timer_config_t timer = {
-        .speed_mode = PWM_MODE,
-        .timer_num = PWM_TIMER,
+        .speed_mode      = PWM_MODE,
+        .timer_num       = PWM_TIMER,
         .duty_resolution = PWM_RESOLUTION,
-        .freq_hz = PWM_FREQ,
-        .clk_cfg = LEDC_AUTO_CLK
+        .freq_hz         = PWM_FREQ,
+        .clk_cfg         = LEDC_AUTO_CLK
     };
     ledc_timer_config(&timer);
 
     ledc_channel_config_t channel = {
-        .gpio_num = PWM_GPIO,
+        .gpio_num   = PWM_GPIO,
         .speed_mode = PWM_MODE,
-        .channel = PWM_CHANNEL,
-        .timer_sel = PWM_TIMER,
-        .duty = 0,
-        .hpoint = 0
+        .channel    = PWM_CHANNEL,
+        .timer_sel  = PWM_TIMER,
+        .duty       = 0,
+        .hpoint     = 0
     };
     ledc_channel_config(&channel);
 
-    // --- Initialize Peltier GPIO ---
+    // --- Peltier GPIO ---
     gpio_reset_pin(PELTIER_GPIO);
     gpio_set_direction(PELTIER_GPIO, GPIO_MODE_OUTPUT);
-    gpio_set_level(PELTIER_GPIO, 0); // Start with Peltier OFF
+    gpio_set_level(PELTIER_GPIO, 0); // start OFF
+}
 
-    // --- Initialize UART Queue ---
-    uart_config_t uart_config = {
-        .baud_rate = 115200,
-        .data_bits = UART_DATA_8_BITS,
-        .parity = UART_PARITY_DISABLE,
-        .stop_bits = UART_STOP_BITS_1,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-        .source_clk = UART_SCLK_DEFAULT,
-    };
-    // Install UART driver using an event queue
-    uart_driver_install(EX_UART_NUM, BUF_SIZE * 2, BUF_SIZE * 2, 20, &uart0_queue, 0);
-    uart_param_config(EX_UART_NUM, &uart_config);
-    
-    // Set UART pins (using UART0 default pins: TX:1, RX:3)
-    uart_set_pin(EX_UART_NUM, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+static void set_fan(int percent)
+{
+    uint32_t duty = (255 * percent) / 100;
+    ledc_set_duty(PWM_MODE, PWM_CHANNEL, duty);
+    ledc_update_duty(PWM_MODE, PWM_CHANNEL);
 }
 
 void peltier_task(void *pvParameters)
 {
     hardware_init();
 
-    uart_event_t event;
-    uint8_t dtmp[BUF_SIZE];
-    char input_buffer[16];
-    int buffer_idx = 0;
+    // Start fan at 30% idle speed
+    set_fan(30);
 
-    printf("\n--- Thermal Control Ready ---\n");
-    printf("Enter 0-100: Set Fan Speed\n");
-    printf("Enter 101:   Peltier ON\n");
-    printf("Enter 102:   Peltier OFF\n");
+    int peltier_state = 0; // 0 = OFF, 1 = ON
 
-    int peltier_state = 0; // 0: OFF, 1: ON
-
-    // Default Fan Speed to 30% when Peltier is OFF
-    uint32_t init_duty = (255 * 30) / 100;
-    ledc_set_duty(PWM_MODE, PWM_CHANNEL, init_duty);
-    ledc_update_duty(PWM_MODE, PWM_CHANNEL);
+    printf("\n--- Thermal Control (AUTO) ---\n");
+    printf("ON  threshold: %.2f C\n", TEMP_ON_X100  / 100.0f);
+    printf("OFF threshold: %.2f C\n", TEMP_OFF_X100 / 100.0f);
 
     while (1) {
-        // Wait up to 500ms for UART event; if none, check temperature
-        if (xQueueReceive(uart0_queue, (void *)&event, (TickType_t)pdMS_TO_TICKS(500))) {
-            if (event.type == UART_DATA) {
-                // Read data from the UART
-                int len = uart_read_bytes(EX_UART_NUM, dtmp, event.size, portMAX_DELAY);
-                for (int i = 0; i < len; i++) {
-                    char c = (char)dtmp[i];
-
-                    if (c == '\n' || c == '\r') {
-                        if (buffer_idx > 0) {
-                            input_buffer[buffer_idx] = '\0';
-                            int val = atoi(input_buffer);
-
-                            if (val >= 0 && val <= 100) {
-                                // Manual Fan Control
-                                uint32_t duty = (255 * val) / 100;
-                                ledc_set_duty(PWM_MODE, PWM_CHANNEL, duty);
-                                ledc_update_duty(PWM_MODE, PWM_CHANNEL);
-                                printf("\n[FAN] Manual Speed set to %d%%\n", val);
-                            } 
-                            else if (val == 101) {
-                                // Manual Peltier ON
-                                gpio_set_level(PELTIER_GPIO, 1);
-                                peltier_state = 1;
-                                printf("\n[PELTIER] Manual State: ON\n");
-                            }
-                            else if (val == 102) {
-                                // Manual Peltier OFF
-                                gpio_set_level(PELTIER_GPIO, 0);
-                                peltier_state = 0;
-                                printf("\n[PELTIER] Manual State: OFF\n");
-                            }
-                            else {
-                                printf("\nInvalid command.\n");
-                            }
-                            buffer_idx = 0;
-                        }
-                    } 
-                    else if (c >= '0' && c <= '9' && buffer_idx < sizeof(input_buffer) - 1) {
-                        input_buffer[buffer_idx++] = c;
-                        // Echo character back to terminal
-                        uart_write_bytes(EX_UART_NUM, &c, 1);
-                    }
-                }
-            } 
-            else {
-                // Handle or clear other events (e.g. FIFO overflow)
-                uart_flush_input(EX_UART_NUM);
-            }
-        } else {
-            // Timeout - perform automatic temperature control
-            int temp_x10 = 0;
-            if (sensor_data_mutex != NULL && xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-                temp_x10 = shared_temp_x10;
-                xSemaphoreGive(sensor_data_mutex);
-            }
-
-            // Define temperature bounds (e.g., turn on > 25.0 C, turn off < 20.0 C)
-            if (temp_x10 > 250 && peltier_state == 0) {
-                gpio_set_level(PELTIER_GPIO, 1);
-                peltier_state = 1;
-                printf("\n[PELTIER AUTO] State: ON (Temp: %d.%d C)\n", temp_x10 / 10, temp_x10 % 10);
-                
-                // Set Fan to 100% when active
-                uint32_t duty = (255 * 100) / 100;
-                ledc_set_duty(PWM_MODE, PWM_CHANNEL, duty);
-                ledc_update_duty(PWM_MODE, PWM_CHANNEL);
-                printf("[FAN AUTO] Speed increased to 100%%\n");
-            } else if (temp_x10 < 200 && peltier_state == 1) {
-                gpio_set_level(PELTIER_GPIO, 0);
-                peltier_state = 0;
-                printf("\n[PELTIER AUTO] State: OFF (Temp: %d.%d C)\n", temp_x10 / 10, temp_x10 % 10);
-                
-                // Reduce Fan to 30% when inactive
-                uint32_t duty = (255 * 30) / 100;
-                ledc_set_duty(PWM_MODE, PWM_CHANNEL, duty);
-                ledc_update_duty(PWM_MODE, PWM_CHANNEL);
-                printf("[FAN AUTO] Speed reduced to 30%%\n");
-            }
+        // Read temperature from shared data
+        int temp_x100 = 0;
+        if (sensor_data_mutex != NULL &&
+            xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
+            temp_x100 = shared_temp_x100;
+            xSemaphoreGive(sensor_data_mutex);
         }
+
+        if (temp_x100 > TEMP_ON_X100 && peltier_state == 0) {
+            // Too warm — turn Peltier ON, ramp fan to 100%
+            gpio_set_level(PELTIER_GPIO, 1);
+            peltier_state = 1;
+            set_fan(100);
+            printf("[PELTIER AUTO] ON  — Temp: %d.%02d C\n",
+                   temp_x100 / 100, temp_x100 % 100);
+
+        } else if (temp_x100 < TEMP_OFF_X100 && peltier_state == 1) {
+            // Cool enough — turn Peltier OFF, reduce fan to 30%
+            gpio_set_level(PELTIER_GPIO, 0);
+            peltier_state = 0;
+            set_fan(30);
+            printf("[PELTIER AUTO] OFF — Temp: %d.%02d C\n",
+                   temp_x100 / 100, temp_x100 % 100);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
-}
+}  

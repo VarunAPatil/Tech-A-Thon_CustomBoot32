@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/uart.h"
@@ -16,9 +17,10 @@ static const char *TAG = "GPS";
 
 /* -------------------- GGA PARSER -------------------- */
 
-static void parse_gga(char *line)
+/* Returns 1 if a GGA sentence was successfully parsed and shared_data was
+ * updated, 0 otherwise (no fix / parse error). */
+static int parse_gga(char *line)
 {
-    char time[16] = {0};
     char lat[32]  = {0};
     char ns[4]    = {0};
     char lon[32]  = {0};
@@ -34,7 +36,6 @@ static void parse_gga(char *line)
         field++;
 
         switch (field) {
-            case 2: strncpy(time, token, sizeof(time)-1); break;
             case 3: strncpy(lat,  token, sizeof(lat)-1);  break;
             case 4: strncpy(ns,   token, sizeof(ns)-1);   break;
             case 5: strncpy(lon,  token, sizeof(lon)-1);  break;
@@ -44,7 +45,7 @@ static void parse_gga(char *line)
         }
     }
 
-    /* If no fix */
+    /* If no fix, fill placeholders */
     if (fix[0] == '0' || fix[0] == '\0') {
         strcpy(lat, "NO SATT");
         strcpy(lon, "NO SATT");
@@ -56,21 +57,21 @@ static void parse_gga(char *line)
     if (sensor_data_mutex &&
         xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(20)) == pdTRUE)
     {
-        if (time[0])
-            strncpy(shared_gps_time, time, 15);
-
-        strncpy(shared_gps_lat, lat, 31);
-        strncpy(shared_gps_ns,  ns,  3);
-        strncpy(shared_gps_lon, lon, 31);
-        strncpy(shared_gps_ew,  ew,  3);
+        strncpy(shared_gps_lat, lat, sizeof(shared_gps_lat) - 1);
+        strncpy(shared_gps_ns,  ns,  sizeof(shared_gps_ns)  - 1);
+        strncpy(shared_gps_lon, lon, sizeof(shared_gps_lon) - 1);
+        strncpy(shared_gps_ew,  ew,  sizeof(shared_gps_ew)  - 1);
+        shared_gps_sats = sats[0] ? atoi(sats) : 0;
 
         xSemaphoreGive(sensor_data_mutex);
     }
 
-    ESP_LOGI(TAG, "TIME:%s LAT:%s%s LON:%s%s FIX:%s SAT:%s",
-             time, lat, ns, lon, ew,
-             fix[0] ? fix : "0",
-             sats[0] ? sats : "0");
+    ESP_LOGI(TAG, "LAT:%s%s LON:%s%s FIX:%s SAT:%d",
+             lat, ns, lon, ew,
+             fix[0]  ? fix  : "0",
+             sats[0] ? atoi(sats) : 0);
+
+    return 1; // sentence was processed
 }
 
 /* -------------------- GPS TASK -------------------- */
@@ -94,28 +95,46 @@ void gps_task(void *pvParameters)
 
     uint8_t data[BUF_SIZE];
     char line[256];
-    int idx = 0;
+    int  idx = 0;
 
     while (1) {
+        /* ---- Wait for firebase_task to release us for the next cycle --- */
+        // Pre-given in main for first iteration; firebase gives it after upload.
+        if (sem_gps_go != NULL) {
+            xSemaphoreTake(sem_gps_go, portMAX_DELAY);
+        }
 
-        int len = uart_read_bytes(UART_PORT, data, BUF_SIZE,
-                                  pdMS_TO_TICKS(100));
+        /* ---- Read UART until we get one valid GGA sentence ------------- */
+        int got_gga = 0;
+        idx = 0;
 
-        for (int i = 0; i < len; i++) {
-            char c = data[i];
+        while (!got_gga) {
+            int len = uart_read_bytes(UART_PORT, data, BUF_SIZE,
+                                      pdMS_TO_TICKS(200));
 
-            if (c == '\n') {
-                line[idx] = '\0';
-                idx = 0;
+            for (int i = 0; i < len && !got_gga; i++) {
+                char c = data[i];
 
-                /* Handle both GPGGA and GNGGA */
-                if (strstr(line, "GGA")) {
-                    parse_gga(line);
+                if (c == '\n') {
+                    line[idx] = '\0';
+                    idx = 0;
+
+                    if (strstr(line, "GGA")) {
+                        parse_gga(line);
+                        got_gga = 1; // stop after first GGA — one per firebase cycle
+                    }
+                } else if (idx < (int)sizeof(line) - 1) {
+                    line[idx++] = c;
                 }
             }
-            else if (idx < sizeof(line) - 1) {
-                line[idx++] = c;
-            }
+        }
+
+        /* ---- Signal firebase_task: GPS reading is ready ---------------- */
+        if (ready_mutex != NULL &&
+            xSemaphoreTake(ready_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
+
+            ready_gps = 1;
+            xSemaphoreGive(ready_mutex);
         }
     }
 }
