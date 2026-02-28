@@ -94,14 +94,31 @@ void temp_init(void)
     gpio_set_pull_mode(DS_PIN, GPIO_PULLUP_ONLY);
 }
 
+/* DS18B20 known-bad output values:
+ *   =  0.00 C  →  0x0000  power / comms fault
+ *   = 85.00 C  →  0x0550  power-on reset (POR) value
+ *   <=-50.00 C →  sensor not responding (ds18b20_read_temp returns -1000)
+ */
+static int temp_is_plausible(float t)
+{
+    if (t <= 0.0f)  return 0;   // power/comms fault
+    if (t >= 85.0f) return 0;   // DS18B20 POR value
+    return 1;
+}
+
+/* Max allowed UPWARD jump between readings (5.00 °C).
+ * Downward jumps (cooling) are always accepted — no limit.
+ * This catches spikes like 21°C → 29°C that would falsely trigger peltier ON. */
+#define SPIKE_UP_LIMIT_X100  500
+
 void temp_task(void *pvParameters)
 {
     temp_init();
 
+    int prev_valid_x100 = 0; // 0 = no reading yet
+
     while (1) {
         /* ---- Wait for firebase_task to release us ---------------------- */
-        // On first iteration the semaphore is pre-given in main, so we run
-        // immediately. After that we block here until firebase signals done.
         if (sem_temp_go != NULL) {
             xSemaphoreTake(sem_temp_go, portMAX_DELAY);
         }
@@ -109,16 +126,34 @@ void temp_task(void *pvParameters)
         /* ---- Take a fresh temperature reading (~750 ms) --------------- */
         float temp = ds18b20_read_temp();
 
+        /* ---- Stage 1: absolute plausibility filter --------------------- */
+        int use_temp_x100;
+        if (!temp_is_plausible(temp)) {
+            use_temp_x100 = prev_valid_x100;
+            printf("[TEMP] Bad reading (%.2f C) — keeping prev: %d.%02d C\n",
+                   temp, use_temp_x100 / 100, use_temp_x100 % 100);
+
+        /* ---- Stage 2: directional spike filter ------------------------- */
+        // Reject sudden UPWARD jumps (> 5°C) — those are sensor glitches.
+        // Downward drops of any size are legitimate (active peltier cooling).
+        } else if (prev_valid_x100 > 0 &&
+                   (int)(temp * 100) - prev_valid_x100 >= SPIKE_UP_LIMIT_X100) {
+            use_temp_x100 = prev_valid_x100;
+            printf("[TEMP] Spike UP rejected! %.2f C vs prev %d.%02d C — keeping prev\n",
+                   temp, prev_valid_x100 / 100, prev_valid_x100 % 100);
+
+        /* ---- Stage 3: valid reading ------------------------------------ */
+        } else {
+            use_temp_x100  = (int)(temp * 100);
+            prev_valid_x100 = use_temp_x100;
+            printf("[TEMP] %.2f C\n", temp);
+        }
+
         /* ---- Write to shared_data ------------------------------------- */
         if (sensor_data_mutex != NULL &&
             xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
 
-            if (temp > -100) {
-                shared_temp_x100 = (int)(temp * 100);
-                printf("Temperature: %.2f C\n", temp);
-            } else {
-                printf("Temp Sensor not detected\n");
-            }
+            shared_temp_x100 = use_temp_x100;
             xSemaphoreGive(sensor_data_mutex);
         }
 

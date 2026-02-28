@@ -1,10 +1,7 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/ledc.h"
-#include "driver/gpio.h"
 #include "shared_data.h"
 
 // Fan PWM Settings
@@ -15,16 +12,15 @@
 #define PWM_TIMER       LEDC_TIMER_0
 #define PWM_MODE        LEDC_LOW_SPEED_MODE
 
-// Peltier ON/OFF Settings
-#define PELTIER_GPIO    15
+// Fan auto-speed curve
+// Below FAN_TEMP_MIN_C → FAN_MIN_PCT %;  Above FAN_TEMP_MAX_C → 100 %
+// Linearly interpolated in between.
+#define FAN_TEMP_MIN_C  15    // °C at which fan runs at minimum speed
+#define FAN_TEMP_MAX_C  20    // °C at which fan runs at full speed
+#define FAN_MIN_PCT     10    // % minimum fan speed (keeps bearing lubricated)
 
-// Temperature thresholds (stored as temp × 100)
-#define TEMP_ON_X100   2200   // Turn Peltier ON  above 22.00 °C
-#define TEMP_OFF_X100  2000   // Turn Peltier OFF below 20.00 °C
-
-static void hardware_init(void)
+static void fan_init(void)
 {
-    // --- Fan PWM ---
     ledc_timer_config_t timer = {
         .speed_mode      = PWM_MODE,
         .timer_num       = PWM_TIMER,
@@ -43,59 +39,67 @@ static void hardware_init(void)
         .hpoint     = 0
     };
     ledc_channel_config(&channel);
-
-    // --- Peltier GPIO ---
-    gpio_reset_pin(PELTIER_GPIO);
-    gpio_set_direction(PELTIER_GPIO, GPIO_MODE_OUTPUT);
-    gpio_set_level(PELTIER_GPIO, 0); // start OFF
 }
 
 static void set_fan(int percent)
 {
+    if (percent < 0)   percent = 0;
+    if (percent > 100) percent = 100;
     uint32_t duty = (255 * percent) / 100;
     ledc_set_duty(PWM_MODE, PWM_CHANNEL, duty);
     ledc_update_duty(PWM_MODE, PWM_CHANNEL);
 }
 
+/* Returns fan speed (0-100 %) proportional to temperature.
+ * Below FAN_TEMP_MIN_C → FAN_MIN_PCT %
+ * Above FAN_TEMP_MAX_C → 100 %
+ * Linearly interpolated between the two bounds. */
+static int compute_fan_percent(int temp_x100)
+{
+    int temp_min_x100 = FAN_TEMP_MIN_C * 100;
+    int temp_max_x100 = FAN_TEMP_MAX_C * 100;
+
+    if (temp_x100 <= temp_min_x100) return FAN_MIN_PCT;
+    if (temp_x100 >= temp_max_x100) return 100;
+
+    int pct = FAN_MIN_PCT +
+              ((100 - FAN_MIN_PCT) * (temp_x100 - temp_min_x100)) /
+              (temp_max_x100 - temp_min_x100);
+    return pct;
+}
+
 void peltier_task(void *pvParameters)
 {
-    hardware_init();
+    fan_init();
+    set_fan(FAN_MIN_PCT); // safe default until first temp reading
 
-    // Start fan at 30% idle speed
-    set_fan(30);
-
-    int peltier_state = 0; // 0 = OFF, 1 = ON
-
-    printf("\n--- Thermal Control (AUTO) ---\n");
-    printf("ON  threshold: %.2f C\n", TEMP_ON_X100  / 100.0f);
-    printf("OFF threshold: %.2f C\n", TEMP_OFF_X100 / 100.0f);
+    printf("\n--- Fan Auto-Speed Control ---\n");
+    printf("Fan curve: %d%% @ %d C  ->  100%% @ %d C\n",
+           FAN_MIN_PCT, FAN_TEMP_MIN_C, FAN_TEMP_MAX_C);
 
     while (1) {
-        // Read temperature from shared data
-        int temp_x100 = 0;
+        /* ---- Read the spike-filtered temp from shared_data ------------- */
+        int temp_x100 = -1;
         if (sensor_data_mutex != NULL &&
-            xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
+            xSemaphoreTake(sensor_data_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
             temp_x100 = shared_temp_x100;
             xSemaphoreGive(sensor_data_mutex);
         }
 
-        if (temp_x100 > TEMP_ON_X100 && peltier_state == 0) {
-            // Too warm — turn Peltier ON, ramp fan to 100%
-            gpio_set_level(PELTIER_GPIO, 1);
-            peltier_state = 1;
-            set_fan(100);
-            printf("[PELTIER AUTO] ON  — Temp: %d.%02d C\n",
-                   temp_x100 / 100, temp_x100 % 100);
-
-        } else if (temp_x100 < TEMP_OFF_X100 && peltier_state == 1) {
-            // Cool enough — turn Peltier OFF, reduce fan to 30%
-            gpio_set_level(PELTIER_GPIO, 0);
-            peltier_state = 0;
-            set_fan(30);
-            printf("[PELTIER AUTO] OFF — Temp: %d.%02d C\n",
-                   temp_x100 / 100, temp_x100 % 100);
+        /* ---- Guard: no usable value — keep fan at minimum ------------- */
+        if (temp_x100 <= 0) {
+            set_fan(FAN_MIN_PCT);
+            printf("[FAN] No valid temp — fan -> %d%%\n", FAN_MIN_PCT);
+            vTaskDelay(pdMS_TO_TICKS(500));
+            continue;
         }
+
+        /* ---- Set fan speed based on temperature ----------------------- */
+        int fan_pct = compute_fan_percent(temp_x100);
+        set_fan(fan_pct);
+        printf("[FAN] Temp: %d.%02d C  ->  %d%%\n",
+               temp_x100 / 100, temp_x100 % 100, fan_pct);
 
         vTaskDelay(pdMS_TO_TICKS(500));
     }
-}  
+}

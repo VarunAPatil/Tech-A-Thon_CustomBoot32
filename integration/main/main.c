@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "driver/gpio.h"
+
+/* Peltier GPIO — must match peltier.c; driven LOW here as early as possible
+ * so the peltier can never be ON during the window between boot and the
+ * peltier_task first running its hardware_init(). */
+#define PELTIER_BOOT_GPIO  15
 
 #include "load_cell.h"
 #include "temp.h"
@@ -40,6 +46,21 @@ SemaphoreHandle_t ready_mutex;
 
 void app_main(void)
 {
+    /* --- Force Peltier OFF FIRST, before anything else ----------------- */
+    // gpio_reset_pin() re-enables internal pull-up — use gpio_config() instead
+    // so the pin is driven LOW with no pull-up from the very first instruction.
+    gpio_config_t boot_peltier_io = {
+        .pin_bit_mask = (1ULL << PELTIER_BOOT_GPIO),
+        .mode         = GPIO_MODE_OUTPUT,
+        .pull_up_en   = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type    = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&boot_peltier_io);
+    gpio_set_level(PELTIER_BOOT_GPIO, 0);
+    printf("[BOOT] Peltier GPIO %d forced LOW (OFF)\n", PELTIER_BOOT_GPIO);
+
+
     printf("Starting Dual-Core Integration Project...\n");
 
     /* --- Create shared data mutex --------------------------------------- */

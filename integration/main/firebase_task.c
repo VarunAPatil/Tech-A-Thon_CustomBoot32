@@ -23,6 +23,7 @@
 #include "esp_log.h"
 #include "esp_http_client.h"
 #include "esp_crt_bundle.h"
+#include "esp_timer.h"
 
 static const char *TAG = "Firebase";
 
@@ -34,8 +35,9 @@ static const char *TAG = "Firebase";
 #define UPLOAD_INTERVAL_MS 1000
 
 /* ---- Firebase endpoint ------------------------------------------------- */
+/* POST to readings.json → Firebase appends a new node per upload (history log) */
 #define FIREBASE_BASE_URL \
-    "https://vaxi-7f913-default-rtdb.firebaseio.com/device1.json?auth=jtzovCmVoVHGQ54VtdONkTq0jLxJVpLgaiJTuD5d"
+    "https://vaxi-7f913-default-rtdb.firebaseio.com/readings.json?auth=jtzovCmVoVHGQ54VtdONkTq0jLxJVpLgaiJTuD5d"
 
 /* =========================================================================
  * wait_for_flag – poll one volatile ready flag with a timeout.
@@ -59,28 +61,32 @@ static int wait_for_flag(volatile int *flag, int timeout_ms)
 }
 
 /* =========================================================================
- * send_to_firebase – build JSON and PUT to Firebase
+ * send_to_firebase – build JSON and POST to Firebase (appends new log entry)
  * =========================================================================*/
 static void send_to_firebase(float temp, const char *lat, const char *ns,
                               const char *lon, const char *ew, int cells)
 {
-    /* Build nested JSON payload:
+    uint64_t elapsed_ms = esp_timer_get_time() / 1000;
+
+    /* Build JSON payload — POST creates a new child node each time:
      * {
-     *   "temp": 27.44,
-     *   "location": { "lat": "1234.5678N", "lon": "09876.5432E" },
-     *   "cells": 3
+     *   "elapsed_ms": 12345,
+     *   "Temperature": 27.44,
+     *   "Location": { "Latitude": "1234.5678N", "Longitude": "09876.5432E" },
+     *   "Vaccine_Units": 3
      * }
      */
-    char payload[192];
+    char payload[256];
     snprintf(payload, sizeof(payload),
-             "{\"Temperature\":%.2f,"
+             "{\"elapsed_ms\":%llu,"
+             "\"Temperature\":%.2f,"
              "\"Location\":{\"Latitude\":\"%s%s\",\"Longitude\":\"%s%s\"},"
-             "\"Vaccine Units\":%d}",
-             temp, lat, ns, lon, ew, cells);
+             "\"Vaccine_Units\":%d}",
+             elapsed_ms, temp, lat, ns, lon, ew, cells);
 
     esp_http_client_config_t cfg = {
         .url               = FIREBASE_BASE_URL,
-        .method            = HTTP_METHOD_PUT,
+        .method            = HTTP_METHOD_POST,  // POST appends; PUT overwrites
         .crt_bundle_attach = esp_crt_bundle_attach,
         .timeout_ms        = 10000,
     };
@@ -93,10 +99,10 @@ static void send_to_firebase(float temp, const char *lat, const char *ns,
 
     esp_err_t err = esp_http_client_perform(client);
     if (err == ESP_OK)
-        ESP_LOGI(TAG, "Sent (HTTP %d) -> %s",
+        ESP_LOGI(TAG, "Logged (HTTP %d) -> %s",
                  esp_http_client_get_status_code(client), payload);
     else
-        ESP_LOGE(TAG, "HTTP PUT failed: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "HTTP POST failed: %s", esp_err_to_name(err));
 
     esp_http_client_cleanup(client);
 }
