@@ -1,0 +1,20 @@
+# Partition table for ESP32-S3 – 16 MB flash (128 Mbit)
+# Total flash    : 16 MB  = 0x1000000
+# Factory offset : starts at 0x10000 (after bootloader + partition table)
+#
+# Layout:
+#   nvs        : 24 KB  – Non-volatile storage (WiFi creds, OTA state, etc.)
+#   otadata    :  8 KB  – OTA selection (which app slot is active)
+#   phy_init   :  4 KB  – RF calibration data
+#   factory    :  0 KB  – Not used; OTA boots from ota_0 / ota_1
+#   ota_0      :  4 MB  – Primary application slot
+#   ota_1      :  4 MB  – Secondary application slot (receives OTA image)
+#   spiffs     :  7.9 MB – Remaining flash for web assets / user data
+#
+# Name,      Type, SubType,   Offset,     Size,    Flags
+nvs,         data, nvs,       0x9000,     0x6000,
+otadata,     data, ota,       0xF000,     0x2000,
+phy_init,    data, phy,       0x11000,    0x1000,
+ota_0,       app,  ota_0,     0x20000,    0x400000,
+ota_1,       app,  ota_1,     0x420000,   0x400000,
+spiffs,      data, spiffs,    0x820000,   0x7E0000,
